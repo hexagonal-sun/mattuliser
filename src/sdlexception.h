@@ -21,6 +21,9 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <exception>
+#include <string>
+
 /**
  * This is a subclass of the std::exception class
  * that will automatically populate the msg variable
@@ -54,7 +57,7 @@ SDLException::SDLException()
 	msg.assign(SDL_GetError());
 }
 
-virtual const char* SDLException::what() const throw()
+const char* SDLException::what() const throw()
 {
 	return msg.c_str();
 }
