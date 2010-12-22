@@ -21,8 +21,8 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __VISUALISER_H_
-#define __VISUALISER_H_
+#ifndef _VISUALISER_H_
+#define _VISUALISER_H_
 
 // Predeclare the window class.
 #include "visualiserWin.h"
