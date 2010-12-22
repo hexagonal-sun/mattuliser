@@ -21,6 +21,9 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _SDLEXCEPTION_H_
+#define _SDLEXCEPTION_H_
+
 #include <exception>
 #include <string>
 
@@ -51,3 +54,5 @@ class SDLException : public std::exception
 	private:
 		std::string msg;
 };
+
+#endif
