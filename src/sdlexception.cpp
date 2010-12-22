@@ -1,7 +1,7 @@
 /****************************************
  *
- * sdlexception.h
- * Defines a SDL exception class.
+ * sdlexception.cpp
+ * Define a SDL exception class.
  *
  * This file is part of mattulizer.
  *
@@ -21,33 +21,16 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <exception>
-#include <string>
+#include "sdlexception.h"
+#include <SDL_error.h>
 
-/**
- * This is a subclass of the std::exception class
- * that will automatically populate the msg variable
- * with the output of the SDL_GetError function.
- */
-class SDLException : public std::exception
+SDLException::SDLException()
 {
-	public:
-		/**
-		 * Create a SDLException class with the message
-		 * variable set to the value of SDL_GetError.
-		 */
-		SDLException();
-		
-		/**
-		 * Virtual destructor.
-		 */
-		virtual ~SDLException() throw() {};
-		
-		/**
-		 * Get the exception text.
-		 * @returns the output of SDL_GetError.
-		 */
-		virtual const char* what() const throw();
-	private:
-		std::string msg;
-};
+	msg.assign(SDL_GetError());
+}
+
+const char* SDLException::what() const throw()
+{
+	return msg.c_str();
+}
+
