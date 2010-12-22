@@ -92,7 +92,7 @@ class visualiserWin
 		 * @param eH the event handler to register.
 		 */
 		void registerEventHandler(visualiserEventHandler eH);
-	private:
+		
 		/**
 		 * This is the main event loop for the window.
 		 * It is implemented in the base class to abstract
@@ -100,6 +100,7 @@ class visualiserWin
 		 * from the subclasses.
 		 */
 		void eventLoop();
+	private:
 		/**
 		 * Called by the event loop to handle
 		 * all events.
