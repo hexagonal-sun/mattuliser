@@ -34,7 +34,7 @@ include_directories(${SDL_INCLUDE_DIR}
 
 set(mattulizer_SRCS src/visualiser.cpp
                     src/visualiserWin.cpp
-                    src/sdlexception.h)
+                    src/sdlexception.cpp)
 
 add_library(mattulizer SHARED ${mattulizer_SRCS})
 target_link_libraries(mattulizer
