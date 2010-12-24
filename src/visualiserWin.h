@@ -26,7 +26,9 @@
 
 #include <SDL_video.h>
 #include <SDL_events.h>
+#include <SDL_mixer.h>
 #include <set>
+#include <string>
 class visualiser;
 
 /**
@@ -100,6 +102,25 @@ class visualiserWin
 		 * from the subclasses.
 		 */
 		void eventLoop();
+		
+		/**
+		 * Play a file.
+		 * @param file the file to play.
+		 * @returns true if the play was successful.
+		 * @throws a SDLException if an error occured.
+		 */
+		bool play(std::string& file);
+		
+		/**
+		 * Resume playback of a file that is paused.
+		 */
+		void resumePlayback();
+		
+		/**
+		 * Pause the playback of the file.
+		 */
+		void pausePlayback();
+		
 	private:
 		/**
 		 * Called by the event loop to handle
@@ -107,6 +128,7 @@ class visualiserWin
 		 */
 		void handleEvent(SDL_Event* e);
 		SDL_Surface* drawContext;
+		Mix_Music* mus;
 		int desiredFrameRate;
 		bool shouldVsync;
 		visualiser* currentVis;

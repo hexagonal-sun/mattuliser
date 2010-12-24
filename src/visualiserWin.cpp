@@ -36,6 +36,7 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	this->desiredFrameRate = desiredFrameRate;
 	this->shouldVsync = vsync;
 	this->currentVis = NULL;
+	this->mus = NULL;
 	
 	// Set the OpenGL attributes
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -107,4 +108,23 @@ void visualiserWin::handleEvent(SDL_Event* e)
 		if(i->type == e->type)
 			i->handler(e);
 	}
+}
+
+bool visualiserWin::play(std::string &file)
+{
+	// Attempt to load the music.
+	mus = Mix_LoadMUS(file.c_str());
+	if(!mus)
+	{
+		throw SDLException();
+		return false;
+	}
+	
+	// Play the music
+	if(Mix_PlayMusic(mus, -1))
+	{
+		throw SDLException();
+		return false;
+	}
+	return true;
 }
