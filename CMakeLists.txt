@@ -32,6 +32,7 @@ find_package(FFTW)
 if(${FFTW_FOUND})
 set(include_DIR ${include_DIR} ${FFTW_INCLUDE_DIR})
 set(library_LIB ${library_LIB} ${FFTW_LIBRARY})
+set(additional_SRCS ${additional_SRCS} src/dsp/fft.cpp)
 endif(${FFTW_FOUND})
 
 include_directories(${SDL_INCLUDE_DIR}
@@ -43,7 +44,8 @@ set(mattulizer_SRCS src/visualiser.cpp
                     src/visualiserWin.cpp
                     src/sdlexception.cpp
                     src/dspmanager.cpp
-                    src/dsp/pcm.cpp)
+                    src/dsp/pcm.cpp
+                    ${additional_SRCS})
 
 add_library(mattulizer SHARED ${mattulizer_SRCS})
 target_link_libraries(mattulizer
