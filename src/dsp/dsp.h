@@ -25,7 +25,7 @@
 #define _DSP_H_
 
 /**
- * A pure abstract class for defineing a DSP plugin.
+ * A pure abstract class for defining a DSP plugin.
  */
 class DSP
 {
