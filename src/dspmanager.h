@@ -27,7 +27,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <set>
-#include "dsp.h"
+#include "dsp/dsp.h"
 
 // forward declare the DSP worker thread entry point.
 static void* DSPWorkerThread(void* DSPMan);
