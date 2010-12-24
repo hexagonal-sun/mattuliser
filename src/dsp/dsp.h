@@ -21,6 +21,9 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _DSP_H_
+#define _DSP_H_
+
 /**
  * A pure abstract class for defineing a DSP plugin.
  */
@@ -46,3 +49,5 @@ class DSP
 		 */
 		virtual void* getDSPData() = 0;
 };
+
+#endif
