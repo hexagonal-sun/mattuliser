@@ -26,6 +26,7 @@ find_package(SDL REQUIRED)
 find_package(SDL_mixer REQUIRED)
 find_package(FFTW REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(Threads REQUIRED)
 
 include_directories(${SDL_INCLUDE_DIR}
                     ${SDLMIXER_INCLUDE_DIR}
@@ -34,11 +35,13 @@ include_directories(${SDL_INCLUDE_DIR}
 
 set(mattulizer_SRCS src/visualiser.cpp
                     src/visualiserWin.cpp
-                    src/sdlexception.cpp)
+                    src/sdlexception.cpp
+                    src/dspmanager.cpp)
 
 add_library(mattulizer SHARED ${mattulizer_SRCS})
 target_link_libraries(mattulizer
                       ${SDL_LIBRARY}
                       ${SDLMIXER_LIBRARY}
                       ${FFTW_LIBRARY}
-                      ${OPENGL_LIBRARIES})
+                      ${OPENGL_LIBRARIES}
+                      ${CMAKE_THREADS_LIBS_INIT})
