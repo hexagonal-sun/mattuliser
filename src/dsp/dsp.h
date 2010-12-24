@@ -24,6 +24,8 @@
 #ifndef _DSP_H_
 #define _DSP_H_
 
+#include <stdint.h>
+
 /**
  * A pure abstract class for defining a DSP plugin.
  */
