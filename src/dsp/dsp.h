@@ -22,7 +22,7 @@
  */
 
 /**
- * A pure abstract class for define a DSP plugin.
+ * A pure abstract class for defineing a DSP plugin.
  */
 class DSP
 {
