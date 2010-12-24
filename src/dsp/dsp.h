@@ -45,9 +45,18 @@ class DSP
 		
 		/**
 		 * This function is called by the visualiser class to get the PCM data.
+		 * @note this should trigger a mutex to not allow any processing happen
+		 * whilst the data is being processed.
 		 * @returns a void pointer to the processed PCM data.
 		 */
 		virtual void* getDSPData() = 0;
+		
+		/**
+		 * This function should be called by the visualiser plugin to signify that
+		 * it has finished using this batch of DSP data and processing can occur
+		 * during the next cycle.
+		 */
+		virtual void relenquishDSPData() = 0;
 };
 
 #endif
