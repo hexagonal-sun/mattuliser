@@ -86,6 +86,11 @@ void DSPManager::processAudioPCM(void* udata, uint8_t* stream, int len)
 		tempBuf = (uint8_t*)malloc(sizeof(uint8_t) * len);
 	}
 	
+	// increment the SEQ numnber.
+	pthread_mutex_lock(PCMSEQMutex);
+	PCMSEQ++;
+	pthread_mutex_unlock(PCMSEQMutex);
+	
 	// attempt to copy some data.
 	// If the mutex can't be locked then we assume that there is still
 	// some DSP processing happening. Just skip this set of samples.
