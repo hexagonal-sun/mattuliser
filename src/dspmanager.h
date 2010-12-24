@@ -32,6 +32,9 @@
 // forward declare the DSP worker thread entry point.
 static void* DSPWorkerThread(void* DSPMan);
 
+// also the audio thread entry point.
+void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len);
+
 /**
  * A DSP manager class will receive the RAW PCM
  * data sent to the sound card and distribute it to
@@ -64,6 +67,7 @@ class DSPManager
 		// the DSPManager's friends
 		friend class visualiserWin;
 		friend void* DSPWorkerThread(void* DSPMan);
+		friend void audioThreadEntryPoint(void* udata, uint8_t* stream, int len);
 	
 	private:
 		/**

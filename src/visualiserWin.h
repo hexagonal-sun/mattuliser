@@ -30,6 +30,7 @@
 #include <set>
 #include <string>
 class visualiser;
+class DSPManager;
 
 /**
  * Use this struct to register an event handler.
@@ -82,6 +83,11 @@ class visualiserWin
 		              Uint32 flags);
 		
 		/**
+		 * Cleanup buffers and objects created by the class.
+		 */
+		virtual ~visualiserWin();
+		
+		/**
 		 * Set the current visualiser. Until this is set,
 		 * the screen will be blank.
 		 * @param vis a reference to a visualiser object.
@@ -132,6 +138,7 @@ class visualiserWin
 		int desiredFrameRate;
 		bool shouldVsync;
 		visualiser* currentVis;
+		DSPManager* dspman;
 		std::set<visualiserEventHandler,
 		         handlerCMP<visualiserEventHandler> > eventHandlers;
 };
