@@ -24,6 +24,7 @@
 #include "visualiserWin.h"
 #include "visualiser.h"
 #include "sdlexception.h"
+#include "dspmanager.h"
 #include <SDL_timer.h>
 
 visualiserWin::visualiserWin(int desiredFrameRate,
@@ -44,10 +45,18 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	if(vsync)
 		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
 	
+	// Create the DSP manmager
+	dspman = new DSPManager();
+	
 	// Create the window
 	drawContext = SDL_SetVideoMode(width, height, 0, flags | SDL_OPENGL);
 	if(drawContext == NULL)
 		throw(SDLException());
+}
+
+visualiserWin::~visualiserWin()
+{
+	delete dspman;
 }
 
 void visualiserWin::setVisualiser(visualiser* vis)
@@ -110,6 +119,14 @@ void visualiserWin::handleEvent(SDL_Event* e)
 	}
 }
 
+void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
+{
+	DSPManager* dspman = static_cast<DSPManager*>(udata);
+	dspman->processAudioPCM(NULL, stream, len);
+}
+
+
+
 bool visualiserWin::play(std::string &file)
 {
 	// Attempt to load the music.
@@ -126,5 +143,7 @@ bool visualiserWin::play(std::string &file)
 		throw SDLException();
 		return false;
 	}
+	
+	Mix_SetPostMix(audioThreadEntryPoint, (void*)dspman);
 	return true;
 }
