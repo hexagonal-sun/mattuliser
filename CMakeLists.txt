@@ -1,4 +1,4 @@
-# Build mattulizer.
+# Top Level build.
 #
 # Copyright 2010 (c) Matthew Leach.
 #
@@ -19,38 +19,6 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(mattulizer)
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/src/cmake/")
-
-find_package(SDL REQUIRED)
-find_package(SDL_mixer REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(Threads REQUIRED)
-find_package(FFTW)
-
-# add the FFTW library to the build only if it is found
-if(${FFTW_FOUND})
-set(include_DIR ${include_DIR} ${FFTW_INCLUDE_DIR})
-set(library_LIB ${library_LIB} ${FFTW_LIBRARY})
-set(additional_SRCS ${additional_SRCS} src/dsp/fft.cpp)
-endif(${FFTW_FOUND})
-
-include_directories(${SDL_INCLUDE_DIR}
-                    ${SDLMIXER_INCLUDE_DIR}
-                    ${OPENGL_INCLUDE_DIR}
-                    ${include_DIR})
-
-set(mattulizer_SRCS src/visualiser.cpp
-                    src/visualiserWin.cpp
-                    src/sdlexception.cpp
-                    src/dspmanager.cpp
-                    src/dsp/pcm.cpp
-                    ${additional_SRCS})
-
-add_library(mattulizer SHARED ${mattulizer_SRCS})
-target_link_libraries(mattulizer
-                      ${SDL_LIBRARY}
-                      ${SDLMIXER_LIBRARY}
-                      ${OPENGL_LIBRARIES}
-                      ${CMAKE_THREADS_LIBS_INIT}
-                      ${library_LIB})
+add_subdirectory(src)
+add_custom_target(examples)
+add_subdirectory(examples EXCLUDE_FROM_ALL)
