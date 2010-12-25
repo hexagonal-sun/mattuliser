@@ -115,7 +115,7 @@ void visualiserWin::handleEvent(SDL_Event* e)
 	{
 		// call the handler if the type is the same
 		if(i->type == e->type)
-			i->handler(e);
+			i->handler(e, i->user);
 	}
 }
 

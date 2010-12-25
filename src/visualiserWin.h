@@ -42,7 +42,8 @@ class DSPManager;
 typedef struct
 {
 	Uint8 type;
-	void (*handler)(SDL_Event *e);
+	void* user;
+	void (*handler)(SDL_Event *e, void* user);
 }visualiserEventHandler;
 
 /**
