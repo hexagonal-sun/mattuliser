@@ -38,6 +38,7 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	this->shouldVsync = vsync;
 	this->currentVis = NULL;
 	this->mus = NULL;
+	this->shouldCloseWindow = false;
 	
 	// Set the OpenGL attributes
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -64,6 +65,11 @@ void visualiserWin::setVisualiser(visualiser* vis)
 	currentVis = vis;
 }
 
+void visualiserWin::closeWindow()
+{
+	shouldCloseWindow = true;
+}
+
 void visualiserWin::registerEventHandler(visualiserEventHandler eh)
 {
 	eventHandlers.insert(eh);
@@ -71,9 +77,8 @@ void visualiserWin::registerEventHandler(visualiserEventHandler eh)
 
 void visualiserWin::eventLoop()
 {
-	bool wantToQuit = false;
 	SDL_Event* e;
-	while(!wantToQuit)
+	while(!shouldCloseWindow)
 	{
 		if(currentVis == NULL)
 		{

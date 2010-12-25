@@ -128,6 +128,11 @@ class visualiserWin
 		 */
 		void pausePlayback();
 		
+		/**
+		 * Close the window the next time the event loop runs.
+		 */
+		void closeWindow();
+		
 	private:
 		/**
 		 * Called by the event loop to handle
@@ -138,6 +143,7 @@ class visualiserWin
 		Mix_Music* mus;
 		int desiredFrameRate;
 		bool shouldVsync;
+		bool shouldCloseWindow;
 		visualiser* currentVis;
 		DSPManager* dspman;
 		std::set<visualiserEventHandler,
