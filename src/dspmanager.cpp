@@ -31,6 +31,11 @@ DSPManager::DSPManager()
 	DSPWorkerThreadTerminate = false;
 	
 	// create the mutexes and the condition variable
+	DSPPluginSetMutex = new pthread_mutex_t;
+	tempBufMutex = new pthread_mutex_t;
+	DSPWorkerThreadTerminateMutex = new pthread_mutex_t;
+	PCMDataReadyCondMutex = new pthread_mutex_t;
+	PCMDataReadyCond = new pthread_cond_t;
 	if(pthread_mutex_init(DSPPluginSetMutex, NULL) !=0 ||
 	   pthread_mutex_init(tempBufMutex, NULL) != 0 ||
 	   pthread_mutex_init(DSPWorkerThreadTerminateMutex, NULL) != 0 ||
@@ -39,6 +44,7 @@ DSPManager::DSPManager()
 		throw(std::exception());
 	
 	// Start the thread
+	DSPWorkerThreadHandle = new pthread_t;
 	pthread_create(DSPWorkerThreadHandle, NULL, DSPWorkerThread, this);
 }
 
@@ -62,6 +68,11 @@ DSPManager::~DSPManager()
 	pthread_mutex_destroy(DSPWorkerThreadTerminateMutex);
 	pthread_mutex_destroy(PCMDataReadyCondMutex);
 	pthread_cond_destroy(PCMDataReadyCond);
+	delete DSPPluginSetMutex;
+	delete tempBufMutex;
+	delete DSPWorkerThreadTerminateMutex;
+	delete PCMDataReadyCondMutex;
+	delete PCMDataReadyCond;
 	
 	// Delete all plugins.
 	for(std::set<DSP*>::iterator i = plugins.begin();
