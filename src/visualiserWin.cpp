@@ -77,22 +77,20 @@ void visualiserWin::registerEventHandler(visualiserEventHandler eh)
 
 void visualiserWin::eventLoop()
 {
-	SDL_Event* e;
+	SDL_Event e;
 	while(!shouldCloseWindow)
 	{
 		if(currentVis == NULL)
 		{
 			// wait for an event if we've not got a visualiser to show
-			SDL_WaitEvent(e);
-			if(e)
-				handleEvent(e);
+			SDL_WaitEvent(&e);
+			handleEvent(&e);
 		}
 		else
 		{
 			// handle events...
-			SDL_PollEvent(e);
-			if(e)
-				handleEvent(e);
+			if(SDL_PollEvent(&e) == 0)
+				handleEvent(&e);
 			
 			// do some drawing
 			Uint32 before = SDL_GetTicks();
