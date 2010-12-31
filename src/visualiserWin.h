@@ -113,6 +113,12 @@ class visualiserWin
 		 * all events.
 		 */
 		void handleEvent(SDL_Event* e);
+		
+		/**
+		 * Register standard event handlers for a window.
+		 */
+		void initialiseStockEventHandlers();
+		
 		SDL_Surface* drawContext;
 		Mix_Music* mus;
 		int desiredFrameRate;

@@ -26,6 +26,7 @@
 #include "sdlexception.h"
 #include "dspmanager.h"
 #include "eventHandlers/eventhandler.h"
+#include "eventHandlers/quitEvent.h"
 #include <SDL_timer.h>
 
 visualiserWin::visualiserWin(int desiredFrameRate,
@@ -66,6 +67,12 @@ visualiserWin::~visualiserWin()
 	{
 		delete *i;
 	}
+}
+
+void visualiserWin::initialiseStockEventHandlers()
+{
+	quitEvent* quitevent = new quitEvent(this);
+	registerEventHandler(quitevent);
 }
 
 void visualiserWin::setVisualiser(visualiser* vis)
