@@ -25,6 +25,7 @@
 #include "visualiser.h"
 #include "sdlexception.h"
 #include "dspmanager.h"
+#include "eventHandlers/eventhandler.h"
 #include <SDL_timer.h>
 
 visualiserWin::visualiserWin(int desiredFrameRate,
@@ -58,6 +59,13 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 visualiserWin::~visualiserWin()
 {
 	delete dspman;
+	
+	// delete all registered event handlers.
+	for(std::set<eventHandler*>::iterator i = eventHandlers.begin();
+	    i != eventHandlers.end(); i ++)
+	{
+		delete *i;
+	}
 }
 
 void visualiserWin::setVisualiser(visualiser* vis)
@@ -70,9 +78,9 @@ void visualiserWin::closeWindow()
 	shouldCloseWindow = true;
 }
 
-void visualiserWin::registerEventHandler(visualiserEventHandler eh)
+void visualiserWin::registerEventHandler(eventHandler* eH)
 {
-	eventHandlers.insert(eh);
+	eventHandlers.insert(eH);
 }
 
 void visualiserWin::eventLoop()
@@ -113,12 +121,13 @@ void visualiserWin::eventLoop()
 
 void visualiserWin::handleEvent(SDL_Event* e)
 {
-	for(std::set<visualiserEventHandler>::iterator i = eventHandlers.begin();
+	for(std::set<eventHandler*>::iterator i = eventHandlers.begin();
 	    i != eventHandlers.end(); i++)
 	{
+		eventHandler* eH = const_cast<eventHandler*>(*i);
 		// call the handler if the type is the same
-		if(i->type == e->type)
-			i->handler(e, i->user);
+		if(eH->eventType() == e->type)
+		eH->handleEvent(e);
 	}
 }
 

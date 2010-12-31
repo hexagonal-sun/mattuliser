@@ -31,35 +31,7 @@
 #include <string>
 class visualiser;
 class DSPManager;
-
-/**
- * Use this struct to register an event handler.
- * Call the registerEventHandler() function with
- * the type set to the type of event the callback
- * should be called with and handler function pointer
- * to a function that will handle the event.
- */
-typedef struct
-{
-	Uint8 type;
-	void* user;
-	void (*handler)(SDL_Event *e, void* user);
-}visualiserEventHandler;
-
-/**
- * A type operator to compare two event handlers.
- */
-template <typename visualiserEventHandler> struct handlerCMP
-{
-	bool operator() (const visualiserEventHandler& x,
-	                 const visualiserEventHandler& y) const
-	{
-		if(x.type == y.type)
-			if(x.handler == y.handler)
-				return true;
-		return false;
-	}
-};
+class eventHandler;
 
 /**
  * A visualiser window.
@@ -96,11 +68,13 @@ class visualiserWin
 		void setVisualiser(visualiser* vis);
 		
 		/**
-		 * Register an event handler for a certian type of event.
-		 * @see visualiserEventHandler.
+		 * Register an event handler for a certain type of event.
+		 * @note once an event handler has been registered, it will automatically be
+		 * deleted by the window.
+		 * @see eventHandler.
 		 * @param eH the event handler to register.
 		 */
-		void registerEventHandler(visualiserEventHandler eH);
+		void registerEventHandler(eventHandler* eH);
 		
 		/**
 		 * This is the main event loop for the window.
@@ -146,8 +120,7 @@ class visualiserWin
 		bool shouldCloseWindow;
 		visualiser* currentVis;
 		DSPManager* dspman;
-		std::set<visualiserEventHandler,
-		         handlerCMP<visualiserEventHandler> > eventHandlers;
+		std::set<eventHandler*> eventHandlers;
 };
 
 #endif
