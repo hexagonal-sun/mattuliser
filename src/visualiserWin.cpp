@@ -55,6 +55,9 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	drawContext = SDL_SetVideoMode(width, height, 0, flags | SDL_OPENGL);
 	if(drawContext == NULL)
 		throw(SDLException());
+	
+	// also initialise the standard event handlers.
+	initialiseStockEventHandlers();
 }
 
 visualiserWin::~visualiserWin()
