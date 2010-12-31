@@ -144,8 +144,6 @@ void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 	dspman->processAudioPCM(NULL, stream, len);
 }
 
-
-
 bool visualiserWin::play(std::string &file)
 {
 	// Attempt to load the music.
