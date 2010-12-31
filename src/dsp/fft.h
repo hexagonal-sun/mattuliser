@@ -40,18 +40,19 @@ typedef struct
  */
 class FFT : public DSP
 {
-	FFT();
-	virtual ~FFT();
-	void processPCMData(int16_t* data, int len, int SEQ);
-	void* getDSPData();
-	void relenquishDSPData();
+	public:
+		FFT();
+		virtual ~FFT();
+		void processPCMData(int16_t* data, int len, int SEQ);
+		void* getDSPData();
+		void relenquishDSPData();
 	
 	private:
-	pthread_mutex_t* PCMDataMutex;
-	fftw_complex* in;
-	fftw_complex* out;
-	int dataLength;
-	FFTData* FFTDataStruct;
+		pthread_mutex_t* PCMDataMutex;
+		fftw_complex* in;
+		fftw_complex* out;
+		int dataLength;
+		FFTData* FFTDataStruct;
 };
 
 #endif
