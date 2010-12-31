@@ -47,7 +47,7 @@ class visualiser
 		 * cleanup that is nesseccery when the visualisation
 		 * either changes or quits.
 		 */
-		virtual ~visualiser() = 0;
+		virtual ~visualiser(){};
 		
 		/**
 		 * This function should be implemented in the sub class
