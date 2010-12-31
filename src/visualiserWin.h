@@ -107,6 +107,12 @@ class visualiserWin
 		 */
 		void closeWindow();
 		
+		/**
+		 * return a pointer to the DSPManager class.
+		 * @returns a pointer to this windows DSP Manager class.
+		 */
+		DSPManager* getDSPManager() const;
+		
 	private:
 		/**
 		 * Called by the event loop to handle

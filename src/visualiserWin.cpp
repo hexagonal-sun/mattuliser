@@ -141,6 +141,11 @@ void visualiserWin::handleEvent(SDL_Event* e)
 	}
 }
 
+DSPManager* visualiserWin::getDSPManager() const
+{
+	return dspman;
+}
+
 void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 {
 	DSPManager* dspman = static_cast<DSPManager*>(udata);
