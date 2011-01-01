@@ -27,6 +27,7 @@
 FFT::FFT()
 {
 	// Initialise mutex
+	PCMDataMutex = new pthread_mutex_t;
 	pthread_mutex_init(PCMDataMutex, NULL);
 	
 	// Initialise member variables.
@@ -44,6 +45,7 @@ FFT::~FFT()
 		free(out);
 	if(FFTDataStruct)
 		delete FFTDataStruct;
+	delete PCMDataMutex;
 }
 
 void FFT::processPCMData(int16_t* data, int len, int SEQ)
