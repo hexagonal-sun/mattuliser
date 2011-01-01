@@ -35,6 +35,7 @@ DSPManager::DSPManager()
 	tempBufMutex = new pthread_mutex_t;
 	DSPWorkerThreadTerminateMutex = new pthread_mutex_t;
 	PCMDataReadyCondMutex = new pthread_mutex_t;
+	PCMSEQMutex = new pthread_mutex_t;
 	PCMDataReadyCond = new pthread_cond_t;
 	if(pthread_mutex_init(DSPPluginSetMutex, NULL) !=0 ||
 	   pthread_mutex_init(tempBufMutex, NULL) != 0 ||
@@ -72,6 +73,7 @@ DSPManager::~DSPManager()
 	delete tempBufMutex;
 	delete DSPWorkerThreadTerminateMutex;
 	delete PCMDataReadyCondMutex;
+	delete PCMSEQMutex;
 	delete PCMDataReadyCond;
 	
 	// Delete all plugins.
