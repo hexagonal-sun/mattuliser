@@ -58,6 +58,12 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	
 	// also initialise the standard event handlers.
 	initialiseStockEventHandlers();
+	
+	// also open the audio device.
+	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
+	{
+		throw(SDLException());
+	}
 }
 
 visualiserWin::~visualiserWin()
@@ -70,6 +76,9 @@ visualiserWin::~visualiserWin()
 	{
 		delete *i;
 	}
+	
+	// Close the sound device
+	Mix_CloseAudio();
 }
 
 void visualiserWin::initialiseStockEventHandlers()
