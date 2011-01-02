@@ -136,6 +136,7 @@ static void* DSPWorkerThread(void* DSPMan)
 			pthread_mutex_unlock(manager->DSPWorkerThreadTerminateMutex);
 			return NULL;
 		}
+		pthread_mutex_unlock(manager->DSPWorkerThreadTerminateMutex);
 		
 		// otherwise, do some processing.
 		pthread_mutex_lock(manager->tempBufMutex);
