@@ -67,6 +67,9 @@ void FFT::processPCMData(int16_t* data, int len, int SEQ)
 		p = fftw_plan_dft_1d(len, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 		fftw_execute(p);
 		
+		// set the number of output samples.
+		dataLength = len/4;
+		
 		// destroy the plan and unlock the mutex so the data can be accessed.
 		fftw_destroy_plan(p);
 		pthread_mutex_unlock(PCMDataMutex);
