@@ -114,6 +114,9 @@ void DSPManager::processAudioPCM(void* udata, uint8_t* stream, int len)
 		memcpy(tempBuf, stream, sizeof(uint8_t) * len);
 		pthread_mutex_unlock(tempBufMutex);
 		
+		// set the size for this chunk of data
+		bufSize = len;
+		
 		// also wake up the worker thread
 		pthread_cond_signal(PCMDataReadyCond);
 	}
