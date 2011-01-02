@@ -29,6 +29,8 @@ DSPManager::DSPManager()
 {
 	tempBuf = NULL;
 	DSPWorkerThreadTerminate = false;
+	PCMSEQ = 0;
+	bufSize = 0;
 	
 	// create the mutexes and the condition variable
 	DSPPluginSetMutex = new pthread_mutex_t;
