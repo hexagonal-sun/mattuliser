@@ -43,6 +43,7 @@ DSPManager::DSPManager()
 	   pthread_mutex_init(tempBufMutex, NULL) != 0 ||
 	   pthread_mutex_init(DSPWorkerThreadTerminateMutex, NULL) != 0 ||
 	   pthread_mutex_init(PCMDataReadyCondMutex, NULL) != 0 ||
+	   pthread_mutex_init(PCMSEQMutex, NULL) != 0 ||
 	   pthread_cond_init(PCMDataReadyCond, NULL) != 0)
 		throw(std::exception());
 	
@@ -70,6 +71,7 @@ DSPManager::~DSPManager()
 	pthread_mutex_destroy(tempBufMutex);
 	pthread_mutex_destroy(DSPWorkerThreadTerminateMutex);
 	pthread_mutex_destroy(PCMDataReadyCondMutex);
+	pthread_mutex_destroy(PCMSEQMutex);
 	pthread_cond_destroy(PCMDataReadyCond);
 	delete DSPPluginSetMutex;
 	delete tempBufMutex;
