@@ -40,9 +40,9 @@ FFT::~FFT()
 {
 	pthread_mutex_destroy(PCMDataMutex);
 	if(in)
-		free(in);
+		fftw_free(in);
 	if(out)
-		free(out);
+		fftw_free(out);
 	if(FFTDataStruct)
 		delete FFTDataStruct;
 	delete PCMDataMutex;
@@ -51,9 +51,9 @@ FFT::~FFT()
 void FFT::processPCMData(int16_t* data, int len, int SEQ)
 {
 	if(in == NULL)
-		in = (fftw_complex*)malloc(sizeof(fftw_complex) * len);
+		in = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * len);
 	if(out == NULL)
-		out = (fftw_complex*)malloc(sizeof(fftw_complex) * len);
+		out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * len);
 	
 	// Attempt to process the data, if not - skip this set of samples.
 	if(pthread_mutex_trylock(PCMDataMutex) == 0)
@@ -64,7 +64,7 @@ void FFT::processPCMData(int16_t* data, int len, int SEQ)
 		
 		// Perform the FFT
 		fftw_plan p;
-		p = fftw_plan_dft_1d(len, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
+		p = fftw_plan_dft_1d(len, in, out, FFTW_FORWARD, FFTW_MEASURE);
 		fftw_execute(p);
 		
 		// set the number of output samples.
