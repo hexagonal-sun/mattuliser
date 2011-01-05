@@ -19,8 +19,9 @@
 
 project(geq)
 find_package(SDL REQUIRED)
-set(geq_SRCS main.cpp)
-include_directories(${SDL_INCLUDE_DIR})
+find_package(OpenGL REQUIRED)
+include_directories(${SDL_INCLUDE_DIR} ${OpenGL_INCLUDE_DIR})
+set(geq_SRCS main.cpp geq.cpp)
 add_executable(geq ${geq_SRCS})
 target_link_libraries(geq mattulizer)
 add_dependencies(examples geq)
