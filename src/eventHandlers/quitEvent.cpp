@@ -1,7 +1,7 @@
 /****************************************
  *
  * quitevent.h
- * Declare a SDL_QUIT event handler.
+ * Define a SDL_QUIT event handler.
  *
  * This file is part of mattulizer.
  *
