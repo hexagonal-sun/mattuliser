@@ -56,6 +56,7 @@ void PCM::processPCMData(int16_t* data, int len, int SEQ)
 	if(this->data == NULL)
 	{
 		this->data = (int16_t*)malloc(sizeof(int16_t) * len);
+		this->dataLength = len;
 	}
 	// If the data isn't being used, then copy it
 	if(pthread_mutex_trylock(PCMDataMutex) == 0)
