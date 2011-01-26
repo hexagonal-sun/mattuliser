@@ -32,6 +32,7 @@ PCM::PCM()
 	data = NULL;
 	
 	// Initialise the mutex.
+	PCMDataMutex = new pthread_mutex_t;
 	if(pthread_mutex_init(PCMDataMutex, NULL) != 0)
 		throw(std::exception());
 	
