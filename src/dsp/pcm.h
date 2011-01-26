@@ -39,17 +39,18 @@ typedef struct
  */
 class PCM : public DSP
 {
-	PCM();
-	~PCM();
-	void processPCMData(int16_t* data, int len, int SEQ);
-	void* getDSPData();
-	void relenquishDSPData();
+	public:
+		PCM();
+		~PCM();
+		void processPCMData(int16_t* data, int len, int SEQ);
+		void* getDSPData();
+		void relenquishDSPData();
 	
 	private:
-	pthread_mutex_t* PCMDataMutex;
-	int16_t* data;
-	int dataLength;
-	PCMData* PCMDataStruct;
+		pthread_mutex_t* PCMDataMutex;
+		int16_t* data;
+		int dataLength;
+		PCMData* PCMDataStruct;
 };
 
 #endif
