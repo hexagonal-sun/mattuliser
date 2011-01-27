@@ -27,6 +27,7 @@
 #include "dspmanager.h"
 #include "eventHandlers/eventhandler.h"
 #include "eventHandlers/quitEvent.h"
+#include "eventHandlers/keyQuit.h"
 #include <SDL_timer.h>
 
 visualiserWin::visualiserWin(int desiredFrameRate,
@@ -84,7 +85,9 @@ visualiserWin::~visualiserWin()
 void visualiserWin::initialiseStockEventHandlers()
 {
 	quitEvent* quitevent = new quitEvent(this);
+	keyQuit* keyquit = new keyQuit(this);
 	registerEventHandler(quitevent);
+	registerEventHandler(keyquit);
 }
 
 void visualiserWin::setVisualiser(visualiser* vis)
