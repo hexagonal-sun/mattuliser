@@ -1,6 +1,6 @@
-# Build all examples.
+# Build a Graphic Equaliser example.
 #
-# Copyright 2010 (c) Matthew Leach.
+# Copyright 2011 (c) Matthew Leach.
 #
 # This file is part of mattulizer.
 #
@@ -17,5 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.#
 
-add_subdirectory(geq)
-add_subdirectory(epiclepsy)
+project(epiclepsy)
+find_package(SDL REQUIRED)
+find_package(OpenGL REQUIRED)
+include_directories(${SDL_INCLUDE_DIR} ${OpenGL_INCLUDE_DIR})
+set(epiclepsy_SRCS main.cpp epiclepsy.cpp)
+	add_executable(epiclepsy ${epiclepsy_SRCS})
+target_link_libraries(epiclepsy mattulizer)
+add_dependencies(examples epiclepsy)
