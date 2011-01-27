@@ -131,8 +131,13 @@ void visualiserWin::eventLoop()
 				// Calculate the time taken to do the drawing
 				Uint32 timeTaken = after - before;
 				
-				// Delay to maintain the framerate
-				SDL_Delay(((Uint32)1000/desiredFrameRate) - timeTaken);
+				int delayTime = ((Uint32)1000/desiredFrameRate) - timeTaken;
+				
+				if(delayTime > 0)
+				{
+					// Delay to maintain the framerate
+					SDL_Delay((Uint32)delayTime);
+				}
 			}
 		}
 	}
