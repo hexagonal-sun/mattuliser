@@ -38,7 +38,8 @@ endif(${FFTW_FOUND})
 
 # add the event handlers to the build.
 set(additional_SRCS ${additional_SRCS}
-                    eventHandlers/quitEvent.cpp)
+                    eventHandlers/quitEvent.cpp
+                    eventHandlers/keyQuit.cpp)
 
 include_directories(${SDL_INCLUDE_DIR}
                     ${SDLMIXER_INCLUDE_DIR}
