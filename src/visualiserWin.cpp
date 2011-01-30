@@ -30,6 +30,8 @@
 #include "eventHandlers/keyQuit.h"
 #include <SDL_timer.h>
 
+#define CIRCBUFSIZE 5
+
 visualiserWin::visualiserWin(int desiredFrameRate,
                              bool vsync,
                              int width,
@@ -167,6 +169,11 @@ void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 {
 	DSPManager* dspman = static_cast<DSPManager*>(udata);
 	dspman->processAudioPCM(NULL, stream, len);
+	
+	if(dspman->cbuf == NULL)
+		dspman->cbuf = new circularBuffer::circularBuffer(CIRCBUFSIZE, sizeof(uint8_t) * len);
+	memcpy(dspman->cbuf->add(), stream, sizeof(uint8_t) * len);
+	memcpy(stream, dspman->cbuf->pop(), sizeof(uint8_t) * len);
 }
 
 bool visualiserWin::play(std::string &file)

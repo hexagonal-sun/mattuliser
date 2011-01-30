@@ -28,6 +28,7 @@
 DSPManager::DSPManager()
 {
 	tempBuf = NULL;
+	cbuf = NULL;
 	DSPWorkerThreadTerminate = false;
 	PCMSEQ = 0;
 	bufSize = 0;

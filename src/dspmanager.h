@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <set>
 #include "dsp/dsp.h"
+#include "circularBuffer.h"
 
 // forward declare the DSP worker thread entry point.
 static void* DSPWorkerThread(void* DSPMan);
@@ -115,6 +116,10 @@ class DSPManager
 		
 		// weather the dsp worker thread should exit
 		bool DSPWorkerThreadTerminate;
+		
+		// A circular buffer object used to delay
+		// the playing of the file with the visualiser.
+		circularBuffer::circularBuffer* cbuf;
 };
 
 #endif
