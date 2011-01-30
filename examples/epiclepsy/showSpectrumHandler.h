@@ -1,7 +1,7 @@
 /****************************************
  *
- * epiclepsy.h
- * Declare a graphical equaliser plugin.
+ * showSpectrumHandler.cpp
+ * Declare a show spectrum handler.
  *
  * This file is part of mattulizer.
  *
@@ -21,42 +21,36 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _EPICLEPSY_H_
-#define _EPICLEPSY_H_
+#ifndef _SHOWSPECTRUMHANDLER_H_
+#define _SHOWSPECTRUMHANDLER_H_
 
-#include "../../src/visualiser.h"
-#include "../../src/visualiserWin.h"
-#include "../../src/dsp/fft.h"
+#include "../../src/eventHandlers/eventhandler.h"
+#include "epiclepsy.h"
 
-/**
- * This is a simple visualiser class that
- * will change the colour of the screen depending upon the
- * dominant frequencies in the playback.
- */
-class epiclepsy : public visualiser
+class showSpectrumHandler : public eventHandler
 {
 	public:
 		/**
-		 * construct the plugin.
+		 * Construct the event handler.
+		 * @param vis a pointer to an instance
+		 * of the epiclepsy class.
 		 */
-		epiclepsy(visualiserWin* win);
+		showSpectrumHandler(epiclepsy* vis);
 		
 		/**
-		 * This function is called by the main thread to draw
-		 * onto the screen. Here we simply draw the visualiser.
+		 * return the event type that this event handler is responsible for
+		 * handling.
+		 * @returns SDL_QUIT
 		 */
-		void draw();
+		uint8_t eventType();
 		
 		/**
-		 * Weather a spectrum show be drawn
-		 * ontop of the background.
+		 * Actually handle the event.
+		 * @param e check the keystroke.
 		 */
-		bool showSpectrum;
+		void handleEvent(SDL_Event* e);
 	private:
-		/**
-		 * The FFT plugin used to get DSP data.
-		 */
-		FFT* fftPlugin;
+		epiclepsy* vis;
 };
 
 #endif

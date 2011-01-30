@@ -22,6 +22,7 @@
  */
 
 #include "epiclepsy.h"
+#include "showSpectrumHandler.h"
 #include "../../src/dspmanager.h"
 #include <SDL_opengl.h>
 #include <math.h>
@@ -32,6 +33,11 @@ epiclepsy::epiclepsy(visualiserWin* win) : visualiser(win)
 	FFT* fftPlugin = new FFT();
 	this->fftPlugin = fftPlugin;
 	win->getDSPManager()->registerDSPPlugin(fftPlugin);
+	
+	// setup the event handler.
+	showSpectrumHandler* h = new showSpectrumHandler(this);
+	win->registerEventHandler(h);
+	showSpectrum = false;
 }
 
 void epiclepsy::draw()
@@ -58,6 +64,15 @@ void epiclepsy::draw()
 			complexArg = complexArg / 2000000;
 			
 			// the bottom of the screen in clip co-ordinates is at x=-1. Start from the bottom
+			if(showSpectrum)
+			{
+				glBegin(GL_LINES);
+				GLfloat xPos = (GLfloat)((i - 100) / 100.0f);
+				glVertex3f(xPos, -(complexArg / 2.0), 1.0f);
+				glVertex3f(xPos, (complexArg / 2.0), 1.0f);
+				glColor3f(1.0f, 1.0f, 1.0f);
+				glEnd();
+			}
 			
 			
 			if(i >= 0 && i <= 3)
