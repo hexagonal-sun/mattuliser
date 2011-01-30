@@ -50,6 +50,7 @@ set(mattulizer_SRCS visualiser.cpp
                     visualiserWin.cpp
                     sdlexception.cpp
                     dspmanager.cpp
+                    circularBuffer.cpp
                     dsp/pcm.cpp
                     ${additional_SRCS})
 
