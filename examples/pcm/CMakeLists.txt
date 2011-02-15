@@ -1,4 +1,4 @@
-# Build all examples.
+# Build a Graphic Equaliser example.
 #
 # Copyright 2010 (c) Matthew Leach.
 #
@@ -17,6 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.#
 
-add_subdirectory(geq)
-add_subdirectory(epiclepsy)
-add_subdirectory(pcm)
+project(pcm)
+find_package(SDL REQUIRED)
+find_package(OpenGL REQUIRED)
+include_directories(${SDL_INCLUDE_DIR} ${OpenGL_INCLUDE_DIR})
+set(pcm_SRCS main.cpp pcm.cpp)
+add_executable(pcm ${pcm_SRCS})
+target_link_libraries(pcm mattulizer)
+add_dependencies(examples pcm)
