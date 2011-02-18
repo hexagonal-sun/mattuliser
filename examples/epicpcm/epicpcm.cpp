@@ -26,7 +26,7 @@
 #include <SDL_opengl.h>
 #include <math.h>
 
-#define OFFSET 0.2
+#define OFFSET 0.1
 
 epicpcm::epicpcm(visualiserWin* win) : visualiser(win)
 {
@@ -89,7 +89,7 @@ void epicpcm::draw()
 		
 		// also draw the PCM data.
 		PCMData* pData = (PCMData*)pcmPlugin->getDSPData();
-		if(data != NULL)
+		if(pData != NULL)
 		{
 			glBegin(GL_LINES);
 			
