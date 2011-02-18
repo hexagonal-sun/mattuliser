@@ -26,6 +26,8 @@
 #include <iostream>
 #include "pcm.h"
 #include <SDL.h>
+#include <unistd.h>
+#include <string.h>
 
 void usage(const char* fileName)
 {
@@ -35,17 +37,39 @@ void usage(const char* fileName)
 
 int main(int argc, char* argv[])
 {
+	int sizex = 800;
+	int sizey = 600;
+	int fullscreen = 0;
+	int opt;
+	while((opt = getopt(argc, argv, "s:f")) != -1)
+	{
+		switch(opt)
+		{
+			case 's':
+				sizex = atoi(strtok(optarg, "x"));
+				sizey = atoi(strtok(NULL, "x"));
+				break;
+			case 'f':
+				fullscreen = SDL_FULLSCREEN;
+				break;
+			default:
+				usage(argv[0]);
+				return EXIT_FAILURE;
+		}
+	}
+	
 	// at least one parameter expected.
-	if(argc < 2)
+	if(optind >= argc)
 	{
 		usage(argv[0]);
 		return EXIT_FAILURE;
 	}
+	
 	// Initialise SDL
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
 	// create a visualiser window.
-	visualiserWin win(0, true, 1000, 400, 0);
+	visualiserWin win(0, true, sizex, sizey, fullscreen);
 	
 	// create an instance of the visualiser class.
 	pcm pcmVis(&win);
@@ -56,7 +80,7 @@ int main(int argc, char* argv[])
 	// attempt to play the file.
 	try
 	{
-		std::string s(argv[1]);
+		std::string s(argv[optind]);
 		win.play(s);
 	}
 	catch(const SDLException e)
