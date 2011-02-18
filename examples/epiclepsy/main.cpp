@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 	// at least one parameter expected.
 	if(optind >= argc)
 	{
-		usage(argv[optind]);
+		usage(argv[0]);
 		return EXIT_FAILURE;
 	}
 	// Initialise SDL
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 	// attempt to play the file.
 	try
 	{
-		std::string s(argv[1]);
+		std::string s(argv[optind]);
 		win.play(s);
 	}
 	catch(const SDLException e)
