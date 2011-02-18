@@ -1,6 +1,6 @@
-# Build all examples.
+# Build a epic pcm example.
 #
-# Copyright 2010 (c) Matthew Leach.
+# Copyright 2011 (c) Matthew Leach.
 #
 # This file is part of mattulizer.
 #
@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU General Public License
 # along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.#
 
-add_subdirectory(geq)
-add_subdirectory(epiclepsy)
-add_subdirectory(pcm)
-add_subdirectory(epicpcm)
+project(epicpcm)
+find_package(SDL REQUIRED)
+find_package(OpenGL REQUIRED)
+include_directories(${SDL_INCLUDE_DIR} ${OpenGL_INCLUDE_DIR})
+set(epicpcm_SRCS main.cpp epicpcm.cpp)
+	add_executable(epicpcm ${epicpcm_SRCS})
+target_link_libraries(epicpcm mattulizer)
+add_dependencies(examples epicpcm)
