@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 	// at least one parameter expected.
 	if(optind >= argc)
 	{
-		usage(argv[0]);
+		usage(argv[optind]);
 		return EXIT_FAILURE;
 	}
 	// Initialise SDL
