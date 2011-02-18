@@ -44,14 +44,14 @@ void pcm::draw()
 	PCMData* data = (PCMData*)pcmPlugin->getDSPData();
 	if(data != NULL)
 	{
-		// loop through each of the samples.
-		for(int i = 0; i < 500; i++)
-		{
 			glBegin(GL_LINES);
+		// loop through each of the samples.
+		for(int i = 1; i < data->dataLength; i++)
+		{
 			
 			// calculate the distance along the x-axis for this line.
-			GLfloat xPos = (i - (500 / 2));
-			xPos = xPos / (500 / 2.0f);
+			GLfloat xPos = (i - (data->dataLength / 2));
+			xPos = xPos / (data->dataLength / 2.0f);
 			
 			
 			// calculate the sample value, given that it's signed 32bit PCM,
@@ -62,10 +62,10 @@ void pcm::draw()
 			glColor3f(fabs(samplePoint), 1 - fabs(samplePoint), 0.0f);
 			
 			// set the vertices.
-			glVertex3f(xPos , 0.0f, 0);
+			//glVertex3f(xPos , 0.0f, 0);
 			glVertex3f(xPos , samplePoint, 0);
-			glEnd();
 		}
+			glEnd();
 	}
 	
 	// release the DSP data.
