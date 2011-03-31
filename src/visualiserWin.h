@@ -113,6 +113,12 @@ class visualiserWin
 		 */
 		DSPManager* getDSPManager() const;
 		
+		/**
+		 * the width and height of the window.
+		 */
+		int width;
+		int height;
+		
 	private:
 		/**
 		 * Called by the event loop to handle
