@@ -44,6 +44,8 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	this->currentVis = NULL;
 	this->mus = NULL;
 	this->shouldCloseWindow = false;
+	this->width = width;
+	this->height = height;
 	
 	// Set the OpenGL attributes
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
