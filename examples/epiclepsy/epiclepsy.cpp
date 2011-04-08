@@ -23,7 +23,7 @@
 
 #include "epiclepsy.h"
 #include "showSpectrumHandler.h"
-#include "../../src/dspmanager.h"
+#include <dspmanager.h>
 #include <SDL_opengl.h>
 #include <math.h>
 

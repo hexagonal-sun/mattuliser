@@ -24,7 +24,7 @@
 #ifndef _SHOWSPECTRUMHANDLER_H_
 #define _SHOWSPECTRUMHANDLER_H_
 
-#include "../../src/eventHandlers/eventhandler.h"
+#include <eventHandlers/eventhandler.h>
 #include "epiclepsy.h"
 
 class showSpectrumHandler : public eventHandler

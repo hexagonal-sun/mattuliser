@@ -24,9 +24,9 @@
 #ifndef _EPICLEPSY_H_
 #define _EPICLEPSY_H_
 
-#include "../../src/visualiser.h"
-#include "../../src/visualiserWin.h"
-#include "../../src/dsp/fft.h"
+#include <visualiser.h>
+#include <visualiserWin.h>
+#include <dsp/fft.h>
 
 /**
  * This is a simple visualiser class that
