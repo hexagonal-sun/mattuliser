@@ -6,6 +6,9 @@ libmattuliser_la_SOURCES = circularBuffer.cpp \
                            eventHandlers/keyQuit.cpp \
                            eventHandlers/quitEvent.cpp
 
+libmattuliser_la_CPPFLAGS = @SDL_CFLAGS@
+libmattuliser_la_LIBADD = @SDL_LIBS@
+
 pkginclude_HEADERS = dspmanager.h sdlexception.h visualiser.h \
                      visualiserWin.h dsp/dsp.h dsp/fft.h dsp/pcm.h \
                      eventHandlers/keyQuit.h eventHandlers/quitEvent.h
