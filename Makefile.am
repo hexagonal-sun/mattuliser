@@ -1,1 +1,1 @@
-SUBDIRS = src examples/epiclepsy
+SUBDIRS = src $(ADDITIONAL_DIR)

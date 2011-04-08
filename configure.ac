@@ -8,6 +8,16 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign])
 LT_INIT
 
+AC_ARG_ENABLE([examples],
+    AS_HELP_STRING([--enable-examples], [Build exaple visualisers.]))
+
+ADDITIONAL_DIR=
+AS_IF([test "x$enable_examples" = "xyes"], [
+  ADDITIONAL_DIR=examples
+])
+
+AC_SUBST([ADDITIONAL_DIR])
+
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
@@ -35,5 +45,6 @@ AM_PATH_SDL([1.2.10], :, AC_MSG_ERROR([SDL Not Found!]))
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
 
-AC_CONFIG_FILES([Makefile src/Makefile examples/epiclepsy/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile \
+                 examples/epiclepsy/Makefile])
 AC_OUTPUT
