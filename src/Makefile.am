@@ -1,0 +1,11 @@
+lib_LTLIBRARIES = libmattuliser.la
+libmattuliser_la_SOURCES = circularBuffer.cpp \
+                           dspmanager.cpp sdlexception.cpp \
+                           visualiser.cpp visualiserWin.cpp \
+                           dsp/fft.cpp dsp/pcm.cpp \
+                           eventHandlers/keyQuit.cpp \
+                           eventHandlers/quitEvent.cpp
+
+pkginclude_HEADERS = dspmanager.h sdlexception.h visualiser.h \
+                     visualiserWin.h dsp/dsp.h dsp/fft.h dsp/pcm.h \
+                     eventHandlers/keyQuit.h eventHandlers/quitEvent.h
