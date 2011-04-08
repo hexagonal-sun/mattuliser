@@ -21,8 +21,8 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../../src/visualiserWin.h"
-#include "../../src/sdlexception.h"
+#include <visualiserWin.h>
+#include <sdlexception.h>
 #include <iostream>
 #include "epiclepsy.h"
 #include <SDL.h>

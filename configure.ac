@@ -15,6 +15,9 @@ AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
 # Checks for libraries.
+PKG_CHECK_MODULES([fftw], [fftw3 >= 3.0.0])
+PKG_CHECK_MODULES([GL], [gl >= 7.0.0])
+PKG_CHECK_MODULES([SDL_mixer], [SDL_mixer >= 1.2.0])
 AM_PROG_LIBTOOL
 
 # Checks for header files.
@@ -32,5 +35,5 @@ AM_PATH_SDL([1.2.10], :, AC_MSG_ERROR([SDL Not Found!]))
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile examples/epiclepsy/Makefile])
 AC_OUTPUT
