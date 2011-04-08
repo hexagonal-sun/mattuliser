@@ -26,6 +26,8 @@ AC_TYPE_INT16_T
 AC_TYPE_SIZE_T
 AC_TYPE_UINT8_T
 
+AM_PATH_SDL([1.2.10], :, AC_MSG_ERROR([SDL Not Found!]))
+
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
