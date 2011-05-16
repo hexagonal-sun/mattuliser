@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.68])
-AC_INIT(mattuliser, 0.9.0, matthew@theleachfamily.co.uk)
+AC_INIT(mattulizer, 0.9.0, matthew@theleachfamily.co.uk)
 AC_CONFIG_SRCDIR([src/circularBuffer.h])
 AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign])
