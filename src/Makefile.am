@@ -14,4 +14,5 @@ libmattuliser_la_LIBADD = @SDL_LIBS@ $(GL_LIBS) \
 
 pkginclude_HEADERS = dspmanager.h sdlexception.h visualiser.h \
                      visualiserWin.h dsp/dsp.h dsp/fft.h dsp/pcm.h \
-                     eventHandlers/keyQuit.h eventHandlers/quitEvent.h
+                     eventHandlers/keyQuit.h eventHandlers/quitEvent.h \
+                     circularBuffer.h
