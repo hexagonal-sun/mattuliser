@@ -1,1 +1,1 @@
-SUBDIRS = epiclepsy
+SUBDIRS = epiclepsy epicpcm pcm geq

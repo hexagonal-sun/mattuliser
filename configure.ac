@@ -46,5 +46,8 @@ AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
 
 AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile \
-                 examples/epiclepsy/Makefile])
+                 examples/epiclepsy/Makefile
+                 examples/epicpcm/Makefile
+                 examples/pcm/Makefile
+                 examples/geq/Makefile])
 AC_OUTPUT
