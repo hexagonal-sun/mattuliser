@@ -41,7 +41,7 @@ public:
 	/**
 	 * construct the plugin.
 	 */
-	poly(visualiserWin* win, int no_vertices, double step);
+	poly(visualiserWin* win, int no_vertices, double step, bool changeColour);
 		
 	/**
 	 * This function is called by the main thread to draw
@@ -60,6 +60,10 @@ private:
 	double* vec_dir;
 	int no_vertices;
 	double step;
+	bool changeColour;
+	float red;
+	float green;
+	float blue;
 };
 
 #endif

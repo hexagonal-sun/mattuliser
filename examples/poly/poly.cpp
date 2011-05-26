@@ -27,7 +27,8 @@
 #include <math.h>
 
 
-poly::poly(visualiserWin* win, int no_vertices, double step) : visualiser(win), threshold(3500000)
+poly::poly(visualiserWin* win, int no_vertices, double step, bool changeColour)
+: visualiser(win), threshold(3500000)
 {
 	// this plug-in needs the FFT DSP, set that up here.
 	FFT* fftPlugin = new FFT();
@@ -35,6 +36,19 @@ poly::poly(visualiserWin* win, int no_vertices, double step) : visualiser(win), 
 	win->getDSPManager()->registerDSPPlugin(fftPlugin);
 	this->no_vertices = no_vertices;
 	this->step = step;
+	this->changeColour = changeColour;
+	if(changeColour)
+	{
+		red = getRand();
+		green = getRand();
+		blue = getRand();
+	}
+	else
+	{
+		red = 1.0f;
+		green = 0.0f;
+		blue = 1.0f;
+	}
 
 	vec_x = (double*)calloc(no_vertices, sizeof(double));
 	vec_y = (double*)calloc(no_vertices, sizeof(double));
@@ -72,10 +86,16 @@ void poly::draw()
 		if(total > threshold)
 		{
 			for(int i = 0; i < no_vertices; i++)
+			{
 				vec_dir[i] = getRand() * 360;
+
+				red = getRand();
+				green = getRand();
+				blue = getRand();
+			}
 		}
 	}
-	glColor3f(1.0f, 0.0f, 1.0f);
+	glColor3f(red, green, blue);
 	glBegin(GL_LINE_LOOP);
 	for(int i = 0; i < no_vertices; i++)
 	{
