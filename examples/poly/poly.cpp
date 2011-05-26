@@ -37,6 +37,7 @@ poly::poly(visualiserWin* win, int no_vertices, double step, bool changeColour)
 	this->no_vertices = no_vertices;
 	this->step = step;
 	this->changeColour = changeColour;
+	hasChanged = false;
 	if(changeColour)
 	{
 		red = getRand();
@@ -85,14 +86,24 @@ void poly::draw()
 		total /= 3;
 		if(total > threshold)
 		{
-			for(int i = 0; i < no_vertices; i++)
+			if(!hasChanged)
 			{
-				vec_dir[i] = getRand() * 360;
-
-				red = getRand();
-				green = getRand();
-				blue = getRand();
+				for(int i = 0; i < no_vertices; i++)
+				{
+					vec_dir[i] = getRand() * 360;
+					if(changeColour)
+					{
+						red = getRand();
+						green = getRand();
+						blue = getRand();
+					}
+				}
+				hasChanged = true;
 			}
+		}
+		else
+		{
+			hasChanged = false;
 		}
 	}
 	glColor3f(red, green, blue);

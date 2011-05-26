@@ -64,6 +64,7 @@ private:
 	float red;
 	float green;
 	float blue;
+	bool hasChanged;
 };
 
 #endif
