@@ -30,7 +30,17 @@
 void usage(const char* fileName)
 {
 	std::cout << "Invalid number of arguments." << std::endl;
-	std::cout << fileName << " [audio file]" << std::endl;
+	std::cout << fileName << " [-n num] [-r rate] [-s res] [-c] [-f] audiofile" 
+	          << std::endl;
+	std::cout << std::endl << "-n num \tThe number of vertices on the polygon. [default 500]" 
+	          << std::endl;
+	std::cout << "-r rate \tThe rate at which the vertices move. [default 0.003]"
+	          << std::endl;
+	std::cout << "-s res \tThe size of the window formatted as {Width}x{height}"
+	          << std::endl;
+	std::cout << "-c \tChange the colour of the polygon lines on each beat." 
+	          << std::endl;
+	std::cout << "-f \tGo into full screen mode" << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -40,13 +50,21 @@ int main(int argc, char* argv[])
 	int fullscreen = 0;
 	int opt;
 	bool colour = false;
-	while((opt = getopt(argc, argv, "s:cf")) != -1)
+	float rate = 0.003;
+	int number = 500;
+	while((opt = getopt(argc, argv, "n:r:s:cf")) != -1)
 	{
 		switch(opt)
 		{
 			case 's':
 				sizex = atoi(strtok(optarg, "x"));
 				sizey = atoi(strtok(NULL, "x"));
+				break;
+			case 'n':
+				number = atoi(optarg);
+				break;
+			case 'r':
+				rate = atof(optarg);
 				break;
 			case 'f':
 				fullscreen = SDL_FULLSCREEN;
@@ -72,7 +90,7 @@ int main(int argc, char* argv[])
 	visualiserWin win(0, true, sizex, sizey, fullscreen);
 	
 	// create an instance of the visualiser class.
-	poly polyVis(&win, 500, 0.003, colour);
+	poly polyVis(&win, number, rate, colour);
 	
 	// set the window's visualiser to the current one.
 	win.setVisualiser(&polyVis);
