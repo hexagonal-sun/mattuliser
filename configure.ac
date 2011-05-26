@@ -49,5 +49,6 @@ AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile \
                  examples/epiclepsy/Makefile
                  examples/epicpcm/Makefile
                  examples/pcm/Makefile
-                 examples/geq/Makefile])
+                 examples/geq/Makefile
+                 examples/poly/Makefile])
 AC_OUTPUT
