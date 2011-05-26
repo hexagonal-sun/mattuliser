@@ -1,3 +1,4 @@
+EXTRA_DIST = eventHandlers dsp
 lib_LTLIBRARIES = libmattuliser.la
 libmattuliser_la_SOURCES = circularBuffer.cpp \
                            dspmanager.cpp sdlexception.cpp \

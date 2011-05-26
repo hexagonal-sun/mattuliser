@@ -1,1 +1,2 @@
+DISTCHECK_CONFIGURE_FLAGS = --enable-examples
 SUBDIRS = src $(ADDITIONAL_DIR)
