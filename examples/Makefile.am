@@ -1,1 +1,1 @@
-SUBDIRS = epiclepsy epicpcm pcm geq
+SUBDIRS = epiclepsy epicpcm pcm geq poly	
