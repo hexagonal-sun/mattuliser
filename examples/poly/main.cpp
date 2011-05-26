@@ -39,7 +39,8 @@ int main(int argc, char* argv[])
 	int sizey = 600;
 	int fullscreen = 0;
 	int opt;
-	while((opt = getopt(argc, argv, "s:f")) != -1)
+	bool colour = false;
+	while((opt = getopt(argc, argv, "s:cf")) != -1)
 	{
 		switch(opt)
 		{
@@ -49,6 +50,9 @@ int main(int argc, char* argv[])
 				break;
 			case 'f':
 				fullscreen = SDL_FULLSCREEN;
+				break;
+			case 'c':
+				colour = true;
 				break;
 			default:
 				usage(argv[0]);
@@ -68,7 +72,7 @@ int main(int argc, char* argv[])
 	visualiserWin win(0, true, sizex, sizey, fullscreen);
 	
 	// create an instance of the visualiser class.
-	poly polyVis(&win, 500, 0.003);
+	poly polyVis(&win, 500, 0.003, colour);
 	
 	// set the window's visualiser to the current one.
 	win.setVisualiser(&polyVis);
