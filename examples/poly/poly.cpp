@@ -26,6 +26,7 @@
 #include <SDL_opengl.h>
 #include <math.h>
 
+#define DEG2RAD 0.0174532925
 
 poly::poly(visualiserWin* win, int no_vertices, double step, bool changeColour)
 : visualiser(win), threshold(3500000)
@@ -111,12 +112,12 @@ void poly::draw()
 	for(int i = 0; i < no_vertices; i++)
 	{
 		// Calculate the new position of the vertex.
-		vec_x[i] = (step * cos(vec_dir[i]) + vec_x[i]);
-		vec_y[i] = (step * sin(vec_dir[i]) + vec_y[i]);
+		vec_x[i] = (step * cos(vec_dir[i] * DEG2RAD) + vec_x[i]);
+		vec_y[i] = (step * sin(vec_dir[i] * DEG2RAD) + vec_y[i]);
 		if(vec_x[i] <= -1 || vec_x[i] >= 1)
-			vec_dir[i] = getRand() * 360;
+			vec_dir[i] = vec_dir[i] - 180;
 		if(vec_y[i] < -1 || vec_y[i] >= 1)
-			vec_dir[i] = getRand() * 360;
+			vec_dir[i] = vec_dir[i] - 180;
 		glVertex3f(vec_x[i], vec_y[i], 0.0f);
 	}
 	glEnd();
