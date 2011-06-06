@@ -28,6 +28,8 @@ AC_PROG_MAKE_SET
 PKG_CHECK_MODULES([fftw], [fftw3 >= 3.0.0])
 PKG_CHECK_MODULES([GL], [gl >= 7.0.0])
 PKG_CHECK_MODULES([SDL_mixer], [SDL_mixer >= 1.2.0])
+PKG_CHECK_MODULES([libavcodec], [libavcodec >= 52.0.0])
+PKG_CHECK_MODULES([libavformat], [libavformat >= 52.0.0])
 AM_PROG_LIBTOOL
 
 # Checks for header files.

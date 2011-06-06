@@ -29,6 +29,12 @@
 #include "eventHandlers/quitEvent.h"
 #include "eventHandlers/keyQuit.h"
 #include <SDL_timer.h>
+#include <iostream>
+
+extern "C"{
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+}
 
 #define CIRCBUFSIZE 5
 
@@ -46,7 +52,7 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	this->shouldCloseWindow = false;
 	this->width = width;
 	this->height = height;
-	
+
 	// Set the OpenGL attributes
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
@@ -180,21 +186,51 @@ void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 
 bool visualiserWin::play(std::string &file)
 {
-	// Attempt to load the music.
-	mus = Mix_LoadMUS(file.c_str());
-	if(!mus)
+	//Initalise ffmpeg.
+	av_register_all();
+
+	//Attempt to open the file.
+	AVFormatContext* fmtCtx;
+	if(av_open_input_file(&fmtCtx, file.c_str(), NULL, 0, NULL) != 0)
 	{
-		throw SDLException();
+		std::cerr << "Could not open file." << std::endl;
 		return false;
 	}
-	
-	// Play the music
-	if(Mix_PlayMusic(mus, -1))
+
+	if(av_find_stream_info(fmtCtx) < 0)
 	{
-		throw SDLException();
+		std::cerr << "Could not find stream information." << std::cerr;
 		return false;
 	}
-	
-	Mix_SetPostMix(audioThreadEntryPoint, (void*)dspman);
-	return true;
+
+	AVCodecContext* codecCtx;
+	int audioStream = -1;
+	for(int i = 0; i < fmtCtx->nb_streams; i++)
+	{
+		if(fmtCtx->streams[i]->codec->codec_type ==
+		   CODEC_TYPE_AUDIO)
+		{
+			audioStream = i;
+			break;
+		}
+	}
+
+	if(audioStream == -1)
+	{
+		std::cerr << "Couldn't find audio stream." << std::endl;
+		return false;
+	}
+
+	codecCtx = fmtCtx->streams[audioStream]->codec;
+	SDL_AudioSpec wantedSpec;
+	SDL_AudioSpec gotSepc;
+
+	wantedSpec.freq = codecCtx->sample_rate;
+	wantedSpec.format = AUDIO_S16SYS;
+	wantedSpec.channels = codecCtx->channels;
+	wantedSpec.silence = 0;
+	wantedSpec.samples = 4096;
+	wantedSpec.callback = audioThreadEntryPoint;
+	//wantedSpec.userdata = 
+	return false;
 }

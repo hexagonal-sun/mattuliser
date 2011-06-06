@@ -9,10 +9,11 @@ libmattuliser_la_SOURCES = circularBuffer.cpp \
                            eventHandlers/quitEvent.cpp
 
 libmattuliser_la_CPPFLAGS = @SDL_CFLAGS@ $(GL_CFLAGS) \
-                            $(fftw_CFLAGS) $(SDL_mixer_CFLAGS)
+                            $(fftw_CFLAGS) $(SDL_mixer_CFLAGS) -D__STDC_CONSTANT_MACROS
 
 libmattuliser_la_LIBADD = @SDL_LIBS@ $(GL_LIBS) \
-                          $(fftw_LIBS) $(SDL_mixer_LIBS)
+                          $(fftw_LIBS) $(SDL_mixer_LIBS) \
+                          $(libavcodec_LIBS) $(libavformat_LIBS)
 
 libmattuliser_la_LDFLAGS = -version-info $(MATTULISER_LIBRARY_VERSION)
 
