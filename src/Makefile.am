@@ -1,5 +1,5 @@
 include $(top_srcdir)/common.mk
-MATTULISER_LIBRARY_VERSION=0:0:0
+MATTULISER_LIBRARY_VERSION=0:1:0
 EXTRA_DIST = eventHandlers dsp
 lib_LTLIBRARIES = libmattuliser.la
 libmattuliser_la_SOURCES = circularBuffer.cpp \
