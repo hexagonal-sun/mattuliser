@@ -1,3 +1,4 @@
+MATTULISER_LIBRARY_VERSION=0:0:0
 EXTRA_DIST = eventHandlers dsp
 lib_LTLIBRARIES = libmattuliser.la
 libmattuliser_la_SOURCES = circularBuffer.cpp \
@@ -12,6 +13,8 @@ libmattuliser_la_CPPFLAGS = @SDL_CFLAGS@ $(GL_CFLAGS) \
 
 libmattuliser_la_LIBADD = @SDL_LIBS@ $(GL_LIBS) \
                           $(fftw_LIBS) $(SDL_mixer_LIBS)
+
+libmattuliser_la_LDFLAGS = -version-info $(MATTULISER_LIBRARY_VERSION)
 
 pkginclude_HEADERS = dspmanager.h sdlexception.h visualiser.h \
                      visualiserWin.h dsp/dsp.h dsp/fft.h dsp/pcm.h \
