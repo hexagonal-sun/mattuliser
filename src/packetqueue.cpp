@@ -71,7 +71,7 @@ AVPacket* packetQueue::get()
 			last_packet = NULL;
 		num_packets--;
 		size -= packetList->pkt.size;
-		*thePacket = packetList->pkt;
+		thePacket = &packetList->pkt;
 		av_free(packetList);
 		pthread_mutex_unlock(mut);
 		return thePacket;

@@ -26,12 +26,26 @@
 
 #include <SDL_video.h>
 #include <SDL_events.h>
-#include <SDL_mixer.h>
 #include <set>
 #include <string>
+#include "packetqueue.h"
 class visualiser;
 class DSPManager;
 class eventHandler;
+
+struct ffmpegargst
+{
+	void* avformatcontext;
+	int audiostream;
+	packetQueue* queue;
+};
+
+struct sdlargst
+{
+	void* avcodeccontext;
+	packetQueue* queue;
+	DSPManager* dspman;
+};
 
 /**
  * A visualiser window.
@@ -132,13 +146,13 @@ class visualiserWin
 		void initialiseStockEventHandlers();
 		
 		SDL_Surface* drawContext;
-		Mix_Music* mus;
 		int desiredFrameRate;
 		bool shouldVsync;
 		bool shouldCloseWindow;
 		visualiser* currentVis;
 		DSPManager* dspman;
 		std::set<eventHandler*> eventHandlers;
+		pthread_t* ffmpegworkerthread;
 };
 
 #endif

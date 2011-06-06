@@ -29,6 +29,7 @@
 #include "eventHandlers/quitEvent.h"
 #include "eventHandlers/keyQuit.h"
 #include <SDL_timer.h>
+#include <SDL_audio.h>
 #include <iostream>
 
 extern "C"{
@@ -48,7 +49,6 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	this->desiredFrameRate = desiredFrameRate;
 	this->shouldVsync = vsync;
 	this->currentVis = NULL;
-	this->mus = NULL;
 	this->shouldCloseWindow = false;
 	this->width = width;
 	this->height = height;
@@ -69,12 +69,6 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	
 	// also initialise the standard event handlers.
 	initialiseStockEventHandlers();
-	
-	// also open the audio device.
-	if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
-	{
-		throw(SDLException());
-	}
 }
 
 visualiserWin::~visualiserWin()
@@ -89,7 +83,6 @@ visualiserWin::~visualiserWin()
 	}
 	
 	// Close the sound device
-	Mix_CloseAudio();
 }
 
 void visualiserWin::initialiseStockEventHandlers()
@@ -156,6 +149,23 @@ void visualiserWin::eventLoop()
 	}
 }
 
+static void* ffmpegWorkerEntry(void* args)
+{
+	ffmpegargst* arg = (ffmpegargst*)args;
+	AVFormatContext* fmtCtx = (AVFormatContext*)arg->avformatcontext;
+	int audioStream = arg->audiostream;
+	packetQueue* queue = arg->queue;
+
+	AVPacket packet;
+	while(av_read_frame(fmtCtx, &packet) >= 0)
+	{
+		if(packet.stream_index == audioStream)
+			queue->put(&packet);
+		else
+			av_free_packet(&packet);
+	}
+}
+
 void visualiserWin::handleEvent(SDL_Event* e)
 {
 	for(std::set<eventHandler*>::iterator i = eventHandlers.begin();
@@ -173,9 +183,81 @@ DSPManager* visualiserWin::getDSPManager() const
 	return dspman;
 }
 
+int static decodeFrame(AVCodecContext* codecCtx, uint8_t* buffer,
+                       int bufferSize, packetQueue* queue)
+{
+	static AVPacket* packet = NULL;
+	static int packetSize = 0;
+	static uint8_t* packetData = NULL;
+
+	//Get a packet.
+	if(packetSize == 0)
+	{
+		packet = queue->get();
+		if(!packet)
+			return -1;
+		packetSize = packet->size;
+		packetData = packet->data;
+	}
+
+	int dataSize = bufferSize;
+	int framesRead = avcodec_decode_audio2(codecCtx, (int16_t*)buffer,
+	                                       &dataSize, packetData, packetSize);
+
+	if(framesRead < 0)
+	{
+		//Skip this frame if we have an error.
+		packetSize = 0;
+		return 0;
+	}
+
+	packetSize -= framesRead;
+	packetData -= framesRead;
+
+	return dataSize;
+}
+
 void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 {
-	DSPManager* dspman = static_cast<DSPManager*>(udata);
+	sdlargst* args = (sdlargst*)udata;
+	DSPManager* dspman = static_cast<DSPManager*>(args->dspman);
+	AVCodecContext* codecCtx = (AVCodecContext*)args->avcodeccontext;
+	packetQueue* queue = args->queue;
+
+	static uint8_t buf[(AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2];
+	static unsigned int bufLength = 0;
+	static unsigned int bufCurrentIndex = 0;
+	uint8_t* streamIndex = stream;
+
+	int samplesLeft = len;
+	while(samplesLeft > 0)
+	{
+		if(bufCurrentIndex >= bufLength)
+		{
+			// No more data in the buffer, get some more.
+			int decodeSize = decodeFrame(codecCtx, buf, sizeof(buf), queue);
+			if(decodeSize < 0)
+			{
+				// something went wrong... silence.
+				bufCurrentIndex = AVCODEC_MAX_AUDIO_FRAME_SIZE;
+				memset(buf, 0, AVCODEC_MAX_AUDIO_FRAME_SIZE);
+			}
+			else
+			{
+			  bufLength = decodeSize;
+			}
+			//Reset the index for the new data.
+			bufCurrentIndex = 0;
+		}
+		int numberOfSamples = bufLength - bufCurrentIndex;
+		if(numberOfSamples > samplesLeft)
+			numberOfSamples = samplesLeft;
+		memcpy(streamIndex, (uint8_t*)buf + bufCurrentIndex, numberOfSamples);
+		samplesLeft -= numberOfSamples;
+		streamIndex += numberOfSamples;
+		bufCurrentIndex += numberOfSamples;
+	}
+
 	dspman->processAudioPCM(NULL, stream, len);
 	
 	if(dspman->cbuf == NULL)
@@ -222,15 +304,55 @@ bool visualiserWin::play(std::string &file)
 	}
 
 	codecCtx = fmtCtx->streams[audioStream]->codec;
+
+	AVCodec *codec;
+	codec = avcodec_find_decoder(codecCtx->codec_id);
+	if(!codec)
+	{
+		std::cerr << "Could not find codec!" << std::endl;
+		return false;
+	}
+	avcodec_open(codecCtx, codec);
+
 	SDL_AudioSpec wantedSpec;
-	SDL_AudioSpec gotSepc;
+	SDL_AudioSpec gotSpec;
+
+	packetQueue* queue = new packetQueue;
+
+	sdlargst* SDLArgs = new sdlargst;
+
+	SDLArgs->avcodeccontext = codecCtx;
+	SDLArgs->queue = queue;
+	SDLArgs->dspman = dspman;
 
 	wantedSpec.freq = codecCtx->sample_rate;
 	wantedSpec.format = AUDIO_S16SYS;
 	wantedSpec.channels = codecCtx->channels;
 	wantedSpec.silence = 0;
-	wantedSpec.samples = 4096;
+	wantedSpec.samples = 1024;
 	wantedSpec.callback = audioThreadEntryPoint;
-	//wantedSpec.userdata = 
+	wantedSpec.userdata = (void*)SDLArgs;
+
+	if(SDL_OpenAudio(&wantedSpec, &gotSpec) < 0)
+	{
+		throw(SDLException());
+		return false;
+	}
+
+	SDL_PauseAudio(0);
+
+	//Construct worker thread arguments.
+	ffmpegargst* args = new ffmpegargst;
+	args->audiostream = audioStream;
+	args->avformatcontext = fmtCtx;
+	args->queue = queue;
+
+	//Begin ffmpeg worker thread.
+	ffmpegworkerthread = new pthread_t;
+
+	//Run the thread.
+	pthread_create(ffmpegworkerthread, NULL, ffmpegWorkerEntry, args);
+
+	// Also run the sound.
 	return false;
 }

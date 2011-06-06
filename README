@@ -14,8 +14,9 @@ create the autoconf scripts. Firstly make sure that you have the
 following installed on your system:
 
 * SDL
-* SDL_mixer
 * fftw3
+* libavcodec
+* libavformat
 
 You should then be able to run:
 
