@@ -1,6 +1,6 @@
 /****************************************
  *
- * visualiserWin.cpp
+ * packetqueue.h
  * Declares a multithreaded AVPacket queue.
  *
  * This file is part of mattulizer.
