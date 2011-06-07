@@ -54,16 +54,17 @@ private:
 	 * The FFT plugin used to get DSP data.
 	 */
 	FFT* fftPlugin;
-	double* vec_x;
+	float* vec_x;
 	const float threshold;
-	double* vec_y;
-	double* vec_dir;
+	float* vec_y;
+	float* vec_dir_x;
+	float* vec_dir_y;
 	int no_vertices;
 	double step;
 	bool changeColour;
-	float red;
-	float green;
-	float blue;
+	float* red;
+	float* green;
+	float* blue;
 	bool hasChanged;
 };
 

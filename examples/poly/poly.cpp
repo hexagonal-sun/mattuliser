@@ -39,27 +39,23 @@ poly::poly(visualiserWin* win, int no_vertices, double step, bool changeColour)
 	this->step = step;
 	this->changeColour = changeColour;
 	hasChanged = false;
-	if(changeColour)
-	{
-		red = getRand();
-		green = getRand();
-		blue = getRand();
-	}
-	else
-	{
-		red = 1.0f;
-		green = 0.0f;
-		blue = 1.0f;
-	}
-
-	vec_x = (double*)calloc(no_vertices, sizeof(double));
-	vec_y = (double*)calloc(no_vertices, sizeof(double));
-	vec_dir = (double*)calloc(no_vertices, sizeof(double));
+	srand(time(NULL));
+	vec_x = (float*)calloc(no_vertices, sizeof(float));
+	vec_y = (float*)calloc(no_vertices, sizeof(float));
+	vec_dir_x = (float*)calloc(no_vertices, sizeof(float));
+	vec_dir_y = (float*)calloc(no_vertices, sizeof(float));
+	red = (float*)calloc(no_vertices, sizeof(float));
+	green = (float*)calloc(no_vertices, sizeof(float));
+	blue = (float*)calloc(no_vertices, sizeof(float));
 	for(int i = 0; i < no_vertices; i++)
 	{
 		vec_x[i] = (getRand() * 2) - 1;
 		vec_y[i] = (getRand() * 2) - 1;
-		vec_dir[i] = getRand() * 360;
+		vec_dir_x[i] = (getRand() * 2) - 1;
+		vec_dir_y[i] = (getRand() * 2) - 1;
+		red[i] = getRand();
+		green[i] = getRand();
+		blue[i] = getRand();
 	}
 }
 
@@ -91,12 +87,13 @@ void poly::draw()
 			{
 				for(int i = 0; i < no_vertices; i++)
 				{
-					vec_dir[i] = getRand() * 360;
+					vec_dir_x[i] = (getRand() * 2) - 1;
+					vec_dir_y[i] = (getRand() * 2) - 1;
 					if(changeColour)
 					{
-						red = getRand();
-						green = getRand();
-						blue = getRand();
+						red[i] = getRand();
+						green[i] = getRand();
+						blue[i] = getRand();
 					}
 				}
 				hasChanged = true;
@@ -107,17 +104,17 @@ void poly::draw()
 			hasChanged = false;
 		}
 	}
-	glColor3f(red, green, blue);
 	glBegin(GL_LINE_LOOP);
 	for(int i = 0; i < no_vertices; i++)
 	{
 		// Calculate the new position of the vertex.
-		vec_x[i] = (step * cos(vec_dir[i] * DEG2RAD) + vec_x[i]);
-		vec_y[i] = (step * sin(vec_dir[i] * DEG2RAD) + vec_y[i]);
+		vec_x[i] = (step * vec_dir_x[i]) + vec_x[i];
+		vec_y[i] = (step * vec_dir_y[i]) + vec_y[i];
 		if(vec_x[i] <= -1 || vec_x[i] >= 1)
-			vec_dir[i] = vec_dir[i] - 180;
+			vec_dir_x[i] = copysign(vec_dir_x[i], -vec_x[i]);
 		if(vec_y[i] < -1 || vec_y[i] >= 1)
-			vec_dir[i] = vec_dir[i] - 180;
+			vec_dir_y[i] = copysign(vec_dir_y[i], -vec_y[i]);
+		glColor3f(red[i], green[i], blue[i]);
 		glVertex3f(vec_x[i], vec_y[i], 0.0f);
 	}
 	glEnd();
