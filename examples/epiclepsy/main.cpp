@@ -64,6 +64,14 @@ int main(int argc, char* argv[])
 	// Initialise SDL
 	SDL_Init(SDL_INIT_EVERYTHING);
 	
+
+	if(fullscreen == SDL_FULLSCREEN)
+	{
+		const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
+		sizex = videoInfo->current_w;
+		sizey = videoInfo->current_h;
+	}
+
 	// create a visualiser window.
 	visualiserWin win(0, true, sizex, sizey, fullscreen);
 	
