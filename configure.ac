@@ -51,5 +51,6 @@ AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile \
                  examples/epicpcm/Makefile
                  examples/pcm/Makefile
                  examples/geq/Makefile
-                 examples/poly/Makefile])
+                 examples/poly/Makefile
+                 examples/polycurve/Makefile])
 AC_OUTPUT
