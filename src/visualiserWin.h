@@ -54,32 +54,60 @@ class visualiserWin
 {
 	public:
 		/**
-		 * Initialise the visualiser, this is for internal use,
-		 * and should be called by the visualiser library only,
-		 * do not create a visualiser class yourself!
-		 * @param lib the mattulizer library instance class that contains
-		 * audio data.
-		 * @param desiredFrameRate the frame rate that will try and be achieved.
-		 * If you're using vsync, this parameter is ignored.
-		 * @param vsync weather to use vsync on the draw function.
+		 * @short create a visualiser window.
+		 *
+		 * This will create and show a window that contains
+		 * the visualiser. It will parse the args that are passed
+		 * for you.
+		 *
+		 * @note This function is now deprecated, please pass
+		 * parameters into the function instead.
+		 *
+		 * see visualiserWin::useage() to print out all argument options.
 		 */
 		visualiserWin(int desiredFrameRate, 
 		              bool vsync,
 		              int width,
 		              int height,
-		              Uint32 flags);
-		
+		              Uint32 flags) __attribute__((deprecated));
+
+		/**
+		 * @short create a visualiser window.
+		 *
+		 * This will create and show a window that contains
+		 * the visualiser. It will parse the args that are passed
+		 * for you.
+		 *
+		 * see visualiserWin::useage() to get all argument options.
+		 */
+		visualiserWin(int argc, char* argv[]);
+
 		/**
 		 * Cleanup buffers and objects created by the class.
 		 */
 		virtual ~visualiserWin();
-		
+
 		/**
 		 * Set the current visualiser. Until this is set,
 		 * the screen will be blank.
 		 * @param vis a reference to a visualiser object.
 		 */
 		void setVisualiser(visualiser* vis);
+
+		/**
+		 * Get argument descriptions and options for the main window.
+		 *
+		 * This function will also print out descriptions for each
+		 * option.
+		 */
+		static std::string usage();
+
+		/**
+		 * Get the small usage string, eg
+		 * -f -a SIZE -t
+		 * It is useful for formulating the first line of usage output.
+		 */
+		static std::string usageSmall();
 		
 		/**
 		 * Register an event handler for a certain type of event.

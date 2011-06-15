@@ -28,6 +28,7 @@
 #include "eventHandlers/eventhandler.h"
 #include "eventHandlers/quitEvent.h"
 #include "eventHandlers/keyQuit.h"
+#include "argexception.h"
 #include <SDL_timer.h>
 #include <SDL_audio.h>
 #include <iostream>
@@ -71,6 +72,76 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	initialiseStockEventHandlers();
 }
 
+visualiserWin::visualiserWin(int argc, char* argv[])
+{
+	// Set the local members to default values.
+	this->desiredFrameRate = 0;
+	this->shouldVsync = true;
+	this->currentVis = NULL;
+	this->shouldCloseWindow = false;
+	this->width = 800;
+	this->height = 600;
+	bool fullscreen = false;
+
+	char opt;
+	// Parse the options. Note, we don't check the default
+	// case as there may be other options that are specified
+	// for other parts of the program (such as visualisers).
+	while((opt = getopt(argc, argv, "s:f")) != -1)
+	{
+		switch(opt)
+		{
+			case 's': // Window Size.
+			{
+				char* tok = strtok(optarg, "x");
+				if(!tok)
+					throw(argException("Window size not formatted properly."));
+
+				// TODO: Use strtol as it has error checking.
+				width = atoi(tok);
+
+				tok = strtok(NULL, "x");
+				if(!tok)
+					throw(argException("Window size not formatted properly."));
+				height = atoi(tok);
+				break;
+			}
+			case 'f': // Fullscreen.
+				fullscreen = true;
+				break;
+		}
+	}
+
+	// If fullscreen is set, detect the resolution.
+	if(fullscreen)
+	{
+		const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
+		width = videoInfo->current_w;
+		height = videoInfo->current_h;
+	}
+
+	// Set the OpenGL attributes
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	if(shouldVsync)
+		SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+
+	// Create the DSP manmager
+	dspman = new DSPManager();
+
+	// Create the window
+	if(fullscreen)
+		drawContext = SDL_SetVideoMode(width, height, 0,
+		                               SDL_FULLSCREEN | SDL_OPENGL);
+	else
+		drawContext = SDL_SetVideoMode(width, height, 0, SDL_OPENGL);
+	if(drawContext == NULL)
+		throw(SDLException());
+
+	// also initialise the standard event handlers.
+	initialiseStockEventHandlers();
+}
+
 visualiserWin::~visualiserWin()
 {
 	delete dspman;
@@ -83,6 +154,27 @@ visualiserWin::~visualiserWin()
 	}
 	
 	// Close the sound device
+}
+
+std::string visualiserWin::usage()
+{
+	std::string theUsage;
+	theUsage = "\n";
+	theUsage += "Visuliser Window Options\n";
+	theUsage += "========================\n";
+	theUsage += "\n";
+	theUsage += "-f      Toggle fulscreen mode. This will make the window detect\n";
+	theUsage += "        your current screen resolution and fill the screen.\n";
+	theUsage += "-s      Set the size of the window. This option should be in\n";
+	theUsage += "        the format [WIDTH]x[HEIGHT], eg 1024x768.";
+	return theUsage;
+}
+
+std::string visualiserWin::usageSmall()
+{
+	std::string theSmallUsage;
+	theSmallUsage = "-f -s [WIDTH]x[HEIGHT]";
+	return theSmallUsage;
 }
 
 void visualiserWin::initialiseStockEventHandlers()

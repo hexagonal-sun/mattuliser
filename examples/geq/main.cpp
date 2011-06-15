@@ -21,43 +21,57 @@
  * along with Mattulizer.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../../src/visualiserWin.h"
-#include "../../src/sdlexception.h"
+#include <visualiserWin.h>
+#include <sdlexception.h>
+#include <argexception.h>
 #include <iostream>
 #include "geq.h"
 #include <SDL.h>
 
-void usage(const char* fileName)
+void usage(const char* fileName, const char* error = NULL)
 {
-	std::cout << "Invalid number of arguments." << std::endl;
-	std::cout << fileName << " [audio file]" << std::endl;
+	if(error)
+		std::cout << error << std::endl;
+	std::cout << "Usage: " << fileName << " [" << visualiserWin::usageSmall()
+	          << "] FILE" << std::endl;
+	std::cout << visualiserWin::usage() << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
-	// at least one parameter expected.
-	if(argc < 2)
-	{
-		usage(argv[0]);
-		return EXIT_FAILURE;
-	}
 	// Initialise SDL
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	// create a visualiser window.
-	visualiserWin win(0, true, 1000, 400, 0);
+	visualiserWin* win;
+	try
+	{
+		win = new visualiserWin(argc, argv);
+	}
+	catch(const argException e)
+	{
+		usage(argv[0], e.what());
+		return EXIT_FAILURE;
+	}
+
+	// Check that a file has been specified.
+	if(optind >= argc)
+	{
+		usage(argv[0]);
+		return EXIT_FAILURE;
+	}
 	
 	// create an instance of the visualiser class.
-	geq geqVis(&win);
+	geq geqVis(win);
 	
 	// set the window's visualiser to the current one.
-	win.setVisualiser(&geqVis);
+	win->setVisualiser(&geqVis);
 	
 	// attempt to play the file.
 	try
 	{
-		std::string s(argv[1]);
-		win.play(s);
+		std::string s(argv[optind]);
+		win->play(s);
 	}
 	catch(const SDLException e)
 	{
@@ -66,6 +80,9 @@ int main(int argc, char* argv[])
 	}
 	
 	// run the windows event loop.
-	win.eventLoop();
+	win->eventLoop();
+
+	// If we come out the event loop, we're quitting, so delete the window.
+	delete win;
 	return EXIT_SUCCESS;
 }

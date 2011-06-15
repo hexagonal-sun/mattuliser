@@ -23,69 +23,55 @@
 
 #include <visualiserWin.h>
 #include <sdlexception.h>
+#include <argexception.h>
 #include <iostream>
 #include "epiclepsy.h"
 #include <SDL.h>
 
-void usage(const char* fileName)
+void usage(const char* fileName, const char* error = NULL)
 {
-	std::cout << "Invalid number of arguments." << std::endl;
-	std::cout << fileName << " [audio file]" << std::endl;
+	if(error)
+		std::cout << error << std::endl;
+	std::cout << "Usage: " << fileName << " [" << visualiserWin::usageSmall()
+	          << "] FILE" << std::endl;
+	std::cout << visualiserWin::usage() << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
-	int sizex = 800;
-	int sizey = 600;
-	int fullscreen = 0;
-	int opt;
-	while((opt = getopt(argc, argv, "s:f")) != -1)
+	// Initialise SDL
+	SDL_Init(SDL_INIT_EVERYTHING);
+
+	// create a visualiser window.
+	visualiserWin* win;
+	try
 	{
-		switch(opt)
-		{
-			case 's':
-				sizex = atoi(strtok(optarg, "x"));
-				sizey = atoi(strtok(NULL, "x"));
-				break;
-			case 'f':
-				fullscreen = SDL_FULLSCREEN;
-				break;
-			default:
-				usage(argv[0]);
-				return EXIT_FAILURE;
-		}
+		win = new visualiserWin(argc, argv);
 	}
-	// at least one parameter expected.
+	catch(const argException e)
+	{
+		usage(argv[0], e.what());
+		return EXIT_FAILURE;
+	}
+
+	// Check that a file has been specified.
 	if(optind >= argc)
 	{
 		usage(argv[0]);
 		return EXIT_FAILURE;
 	}
-	// Initialise SDL
-	SDL_Init(SDL_INIT_EVERYTHING);
-	
-
-	if(fullscreen == SDL_FULLSCREEN)
-	{
-		const SDL_VideoInfo* videoInfo = SDL_GetVideoInfo();
-		sizex = videoInfo->current_w;
-		sizey = videoInfo->current_h;
-	}
-
-	// create a visualiser window.
-	visualiserWin win(0, true, sizex, sizey, fullscreen);
 	
 	// create an instance of the visualiser class.
-	epiclepsy epiclepsyVis(&win);
+	epiclepsy epiclepsyVis(win);
 	
 	// set the window's visualiser to the current one.
-	win.setVisualiser(&epiclepsyVis);
+	win->setVisualiser(&epiclepsyVis);
 	
 	// attempt to play the file.
 	try
 	{
 		std::string s(argv[optind]);
-		win.play(s);
+		win->play(s);
 	}
 	catch(const SDLException e)
 	{
@@ -94,6 +80,9 @@ int main(int argc, char* argv[])
 	}
 	
 	// run the windows event loop.
-	win.eventLoop();
+	win->eventLoop();
+
+	// If we come out the event loop, we're quitting, so delete the window.
+	delete win;
 	return EXIT_SUCCESS;
 }
