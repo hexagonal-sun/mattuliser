@@ -125,7 +125,7 @@ void FFT::processPCMData(int16_t* data, int len, int SEQ)
 			linkedPCMData* old = head;
 			head = head->next;
 			free(old->data);
-			free(old)
+			free(old);
 			noSampleSetsInList--;
 		}
 		// destroy the plan and unlock the mutex so the data can be accessed.
