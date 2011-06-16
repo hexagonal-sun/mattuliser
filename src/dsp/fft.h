@@ -34,6 +34,13 @@ typedef struct
 	int dataLength;
 }FFTData;
 
+typedef struct lpcmd
+{
+	int16_t* data;
+	int dataLength;
+	struct lpcmd* next;
+}linkedPCMData;
+
 /**
  * Perform a FFT on the PCM data and send
  * it to the visualiser.
@@ -41,7 +48,13 @@ typedef struct
 class FFT : public DSP
 {
 	public:
-		FFT();
+		/**
+		 * Construct the FFT plugin.
+		 *
+		 * @param noSampleSets This will determine the number of sets
+		 * of samples that the plugin stores to do the FFT.
+		 */
+		FFT(int noSampleSets = 1);
 		virtual ~FFT();
 		void processPCMData(int16_t* data, int len, int SEQ);
 		void* getDSPData();
@@ -49,6 +62,10 @@ class FFT : public DSP
 	
 	private:
 		pthread_mutex_t* PCMDataMutex;
+		linkedPCMData* head;
+		linkedPCMData* tail;
+		int noSampleSets;
+		int noSampleSetsInList;
 		fftw_complex* in;
 		fftw_complex* out;
 		int dataLength;
