@@ -87,6 +87,7 @@ visualiserWin::visualiserWin(int argc, char* argv[])
 	// Parse the options. Note, we don't check the default
 	// case as there may be other options that are specified
 	// for other parts of the program (such as visualisers).
+	opterr = 0;
 	while((opt = getopt(argc, argv, "s:f")) != -1)
 	{
 		switch(opt)
