@@ -24,20 +24,75 @@
 #include "epiclepsy.h"
 #include "showSpectrumHandler.h"
 #include <dspmanager.h>
+#include <argexception.h>
 #include <SDL_opengl.h>
 #include <math.h>
 
-epiclepsy::epiclepsy(visualiserWin* win) : visualiser(win)
+epiclepsy::epiclepsy(visualiserWin* win, int argc, char* argv[]) : visualiser(win)
 {
+	int noSampleSets = 1;
+	int noLines = 200;
+	char opt;
+
+	// Supress errors.
+	opterr = 0;
+	optind = 1;
+	while((opt = getopt(argc, argv, "b:n:")) != -1)
+	{
+		switch(opt)
+		{
+			case 'b':
+				if(optarg != NULL)
+					noSampleSets = atoi(optarg);
+				else
+					throw(argException("-b expects a parameter."));
+				break;
+			case 'n':
+				if(optarg != NULL)
+					noLines = atoi(optarg);
+				else
+					throw(argException("-n expects a parameter."));
+				break;
+		}
+	}
+
 	// this plug-in needs the FFT DSP, set that up here.
-	FFT* fftPlugin = new FFT();
+	FFT* fftPlugin = new FFT(noSampleSets);
 	this->fftPlugin = fftPlugin;
 	win->getDSPManager()->registerDSPPlugin(fftPlugin);
+
+	// Set local member variables.
+	this->noLinesToDraw = noLines;
 	
 	// setup the event handler.
 	showSpectrumHandler* h = new showSpectrumHandler(this);
 	win->registerEventHandler(h);
 	showSpectrum = false;
+}
+
+std::string epiclepsy::usage()
+{
+	std::string theArgs;
+	theArgs = "\n";
+	theArgs += "Visualiser Options\n";
+	theArgs += "==================\n";
+	theArgs += "\n";
+	theArgs += "-b      The number of sample sets sent to the FFT. The higher the number\n";
+	theArgs += "        the more detailed the FFT and colourful the screen but, if\n";
+	theArgs += "        to high a number is used the visualisation can become VERY slow.\n";
+	theArgs += "        The default value is just 1 set of samples.\n";
+	theArgs += "-n      This is the number of bars that are shown on the screen\n";
+	theArgs += "        when the 'v' key is pressed and the FFT visualisation is\n";
+	theArgs += "        enabled. The default is 200 bars. If zero is set, the whole\n";
+	theArgs += "        FFT frequency spectrum is shown.";
+	return theArgs;
+}
+
+std::string epiclepsy::usageSmall()
+{
+	std::string theSmallUsage;
+	theSmallUsage = "-b SAMPLE_SETS -n NUMBER_OF_BARS";
+	return theSmallUsage;
 }
 
 void epiclepsy::draw()
@@ -54,7 +109,11 @@ void epiclepsy::draw()
 		GLfloat lowerAvg = 0;
 		GLfloat medAvg = 0;
 		GLfloat hiAvg = 0;
-		for(int i = 0; i < 200; i++)
+
+		// Check the number of lines to draw.
+		if(noLinesToDraw == 0)
+			noLinesToDraw = data->dataLength;
+		for(int i = 0; i < noLinesToDraw; i++)
 		{
 			// find the argument of the complex number.
 			GLfloat complexArg = (GLfloat)sqrtf(pow(data->data[i][0], 2) +
@@ -67,7 +126,7 @@ void epiclepsy::draw()
 			if(showSpectrum)
 			{
 				glBegin(GL_LINES);
-				GLfloat xPos = (GLfloat)((i - 100) / 100.0f);
+				GLfloat xPos = (GLfloat)((i - (float)(noLinesToDraw / 2)) /((float)noLinesToDraw / 2));
 				glVertex3f(xPos, -(complexArg / 2.0), 1.0f);
 				glVertex3f(xPos, (complexArg / 2.0), 1.0f);
 				glColor3f(1.0f, 1.0f, 1.0f);

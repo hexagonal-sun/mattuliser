@@ -33,12 +33,20 @@ void usage(const char* fileName, const char* error = NULL)
 	if(error)
 		std::cout << error << std::endl;
 	std::cout << "Usage: " << fileName << " [" << visualiserWin::usageSmall()
-	          << "] FILE" << std::endl;
+	          << " " << epiclepsy::usageSmall() <<  "] FILE" << std::endl;
 	std::cout << visualiserWin::usage() << std::endl;
+	std::cout << epiclepsy::usage() << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
+	// For some reason, getopt wil change the order
+	// of the elements in argv, so store a copy.
+	// TODO: Investigate this to find a better solution.
+	char* argvCopy[argc];
+	for(int i = 0; i < argc; i++)
+		argvCopy[i] = argv[i];
+
 	// Initialise SDL
 	SDL_Init(SDL_INIT_EVERYTHING);
 
@@ -54,23 +62,16 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	// Check that a file has been specified.
-	if(optind >= argc)
-	{
-		usage(argv[0]);
-		return EXIT_FAILURE;
-	}
-	
 	// create an instance of the visualiser class.
-	epiclepsy epiclepsyVis(win);
-	
+	epiclepsy epiclepsyVis(win, argc, argvCopy);
+
 	// set the window's visualiser to the current one.
 	win->setVisualiser(&epiclepsyVis);
-	
+
 	// attempt to play the file.
 	try
 	{
-		std::string s(argv[optind]);
+		std::string s(argv[argc - 1]);
 		win->play(s);
 	}
 	catch(const SDLException e)

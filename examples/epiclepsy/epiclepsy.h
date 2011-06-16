@@ -39,13 +39,17 @@ class epiclepsy : public visualiser
 		/**
 		 * construct the plugin.
 		 */
-		epiclepsy(visualiserWin* win);
+		epiclepsy(visualiserWin* win, int argc, char* argv[]);
 		
 		/**
 		 * This function is called by the main thread to draw
 		 * onto the screen. Here we simply draw the visualiser.
 		 */
 		void draw();
+
+		static std::string usage();
+
+		static std::string usageSmall();
 		
 		/**
 		 * Weather a spectrum show be drawn
@@ -57,6 +61,8 @@ class epiclepsy : public visualiser
 		 * The FFT plugin used to get DSP data.
 		 */
 		FFT* fftPlugin;
+
+		int noLinesToDraw;
 };
 
 #endif
