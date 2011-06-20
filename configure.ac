@@ -45,6 +45,8 @@ AM_PATH_SDL([1.2.10], :, AC_MSG_ERROR([SDL Not Found!]))
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([pow])
+AC_CHECK_FUNCS([sqrt])
+AC_CHECK_FUNCS([memset])
 
 AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile \
                  examples/epiclepsy/Makefile
