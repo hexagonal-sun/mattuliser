@@ -8,7 +8,8 @@ libmattuliser_la_SOURCES = circularBuffer.cpp \
                            dsp/fft.cpp dsp/pcm.cpp \
                            eventHandlers/keyQuit.cpp \
                            eventHandlers/quitEvent.cpp \
-                           packetqueue.cpp argexception.cpp
+                           packetqueue.cpp argexception.cpp \
+                           util/freelist.cpp
 
 libmattuliser_la_CPPFLAGS = @SDL_CFLAGS@ $(GL_CFLAGS) \
                             $(fftw_CFLAGS)
@@ -23,4 +24,5 @@ nobase_pkginclude_HEADERS = \
 	dspmanager.h sdlexception.h visualiser.h \
 	visualiserWin.h dsp/dsp.h dsp/fft.h dsp/pcm.h \
 	eventHandlers/keyQuit.h eventHandlers/quitEvent.h \
-	circularBuffer.h packetqueue.h argexception.h
+	circularBuffer.h packetqueue.h argexception.h \
+	util/freelist.h
