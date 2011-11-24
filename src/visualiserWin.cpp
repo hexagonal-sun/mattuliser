@@ -294,8 +294,8 @@ int static decodeFrame(AVCodecContext* codecCtx, uint8_t* buffer,
 	}
 
 	int dataSize = bufferSize;
-	int framesRead = avcodec_decode_audio2(codecCtx, (int16_t*)buffer,
-	                                       &dataSize, packetData, packetSize);
+	int framesRead = avcodec_decode_audio3(codecCtx, (int16_t*)buffer,
+	                                       &dataSize, packet);
 
 	if(framesRead < 0)
 	{
@@ -383,7 +383,7 @@ bool visualiserWin::play(std::string &file)
 	for(int i = 0; i < fmtCtx->nb_streams; i++)
 	{
 		if(fmtCtx->streams[i]->codec->codec_type ==
-		   CODEC_TYPE_AUDIO)
+		   AVMEDIA_TYPE_AUDIO)
 		{
 			audioStream = i;
 			break;
