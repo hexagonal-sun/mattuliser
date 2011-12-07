@@ -56,5 +56,6 @@ AC_CONFIG_FILES([Makefile src/Makefile examples/Makefile \
                  examples/geq/Makefile
                  examples/poly/Makefile
                  examples/polycurve/Makefile
-                 examples/geq3d/Makefile])
+                 examples/geq3d/Makefile
+                 examples/surface/Makefile])
 AC_OUTPUT
