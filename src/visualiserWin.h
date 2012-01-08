@@ -32,6 +32,7 @@
 class visualiser;
 class DSPManager;
 class eventHandler;
+class visualiserWin;
 
 struct ffmpegargst
 {
@@ -45,6 +46,13 @@ struct sdlargst
 	void* avcodeccontext;
 	packetQueue* queue;
 	DSPManager* dspman;
+};
+
+struct mpdargst
+{
+	DSPManager* dspman;
+	std::string file;
+	visualiserWin* win;
 };
 
 /**
@@ -125,6 +133,12 @@ class visualiserWin
 		 * from the subclasses.
 		 */
 		void eventLoop();
+
+		/**
+		 * Used by worker threads to signal an error and
+		 * break out of the event loop.
+		 */
+		void signalError();
 		
 		/**
 		 * Play a file.
@@ -169,7 +183,7 @@ class visualiserWin
 		void handleEvent(SDL_Event* e);
 		
 		/**
-		 * Register standard event handlers for a window.
+		 * register standard event handlers for a window.
 		 */
 		void initialiseStockEventHandlers();
 		
@@ -177,10 +191,13 @@ class visualiserWin
 		int desiredFrameRate;
 		bool shouldVsync;
 		bool shouldCloseWindow;
+		bool mpdError;
 		visualiser* currentVis;
 		DSPManager* dspman;
 		std::set<eventHandler*> eventHandlers;
 		pthread_t* ffmpegworkerthread;
+		bool MPDMode;
+		std::string MPDFile;
 };
 
 #endif

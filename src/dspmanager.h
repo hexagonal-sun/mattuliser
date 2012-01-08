@@ -64,13 +64,7 @@ class DSPManager
 		 * @param d the created and initialised plugin to use
 		 */
 		void registerDSPPlugin(DSP* d);
-		
-		// the DSPManager's friends
-		friend class visualiserWin;
-		friend void* DSPWorkerThread(void* DSPMan);
-		friend void audioThreadEntryPoint(void* udata, uint8_t* stream, int len);
-	
-	private:
+
 		/**
 		 * Copy the PCM data and distribute it to the plugins.
 		 * @param udata a user pointer to be used - should be NULL.
@@ -79,6 +73,12 @@ class DSPManager
 		 */
 		void processAudioPCM(void* udata, uint8_t* stream, int len);
 		
+		// the DSPManager's friends
+		friend class visualiserWin;
+		friend void* DSPWorkerThread(void* DSPMan);
+		friend void audioThreadEntryPoint(void* udata, uint8_t* stream, int len);
+	
+	private:
 		/**
 		 * The entry point to the DSP worker thread.
 		 * @param arg user defined args from pthread.

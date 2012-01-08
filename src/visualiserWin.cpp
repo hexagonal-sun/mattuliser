@@ -67,6 +67,10 @@ visualiserWin::visualiserWin(int desiredFrameRate,
 	drawContext = SDL_SetVideoMode(width, height, 0, flags | SDL_OPENGL);
 	if(drawContext == NULL)
 		throw(SDLException());
+
+	// Disable MPD mode by default.
+	MPDMode = false;
+	mpdError = false;
 	
 	// also initialise the standard event handlers.
 	initialiseStockEventHandlers();
@@ -82,13 +86,14 @@ visualiserWin::visualiserWin(int argc, char* argv[])
 	this->width = 800;
 	this->height = 600;
 	bool fullscreen = false;
-
+	MPDMode = false;
+	mpdError = false;
 	char opt;
 	// Parse the options. Note, we don't check the default
 	// case as there may be other options that are specified
 	// for other parts of the program (such as visualisers).
 	opterr = 0;
-	while((opt = getopt(argc, argv, "s:f")) != -1)
+	while((opt = getopt(argc, argv, "s:fm:")) != -1)
 	{
 		switch(opt)
 		{
@@ -109,6 +114,10 @@ visualiserWin::visualiserWin(int argc, char* argv[])
 			}
 			case 'f': // Fullscreen.
 				fullscreen = true;
+				break;
+			case 'm':
+				MPDFile = optarg;
+				MPDMode = true;
 				break;
 		}
 	}
@@ -201,6 +210,12 @@ void visualiserWin::registerEventHandler(eventHandler* eH)
 	eventHandlers.insert(eH);
 }
 
+void visualiserWin::signalError()
+{
+	std::cout << "SHIIT." << std::endl;
+	mpdError = true;
+}
+
 void visualiserWin::eventLoop()
 {
 	SDL_Event e;
@@ -214,6 +229,10 @@ void visualiserWin::eventLoop()
 		}
 		else
 		{
+
+			// Check for error.
+			if(mpdError)
+				return;
 			// handle events...
 			if(SDL_PollEvent(&e) == 0)
 				handleEvent(&e);
@@ -240,6 +259,28 @@ void visualiserWin::eventLoop()
 			}
 		}
 	}
+}
+
+static void* MPDWorkerEntry(void* args)
+{
+	mpdargst* mpdargs = (mpdargst*)args;
+	FILE* f = fopen(mpdargs->file.c_str(), "r");
+	if(f == NULL)
+	{
+		// we couldn't open the file.
+		mpdargs->win->signalError();
+		std::cout << "Could not open MPD FIFO: " << mpdargs->file << std::endl;
+		return NULL;
+	}
+	uint8_t data[2048];
+	while(true)
+	{
+		size_t noRead = fread(&data, sizeof(uint8_t), 2048, f);
+		if(noRead == 0)
+			break;
+		mpdargs->dspman->processAudioPCM(NULL, data, (int)noRead);
+	}
+	return 0;
 }
 
 static void* ffmpegWorkerEntry(void* args)
@@ -361,6 +402,16 @@ void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 
 bool visualiserWin::play(std::string &file)
 {
+	if(MPDMode)
+	{
+		mpdargst *args = new mpdargst;
+		args->dspman = dspman;
+		args->file = MPDFile;
+		args->win = this;
+		ffmpegworkerthread = new pthread_t;
+		pthread_create(ffmpegworkerthread, NULL, MPDWorkerEntry, args);
+		return true;
+	}
 	//Initalise ffmpeg.
 	av_register_all();
 
