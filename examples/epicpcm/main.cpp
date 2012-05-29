@@ -26,6 +26,7 @@
 #include <argexception.h>
 #include <iostream>
 #include "epicpcm.h"
+#include <unistd.h>
 #include <SDL.h>
 
 void usage(const char* fileName, const char* error = NULL)

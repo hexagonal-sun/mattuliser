@@ -25,6 +25,7 @@
 #include "../../src/sdlexception.h"
 #include "polycurve.h"
 #include <iostream>
+#include <unistd.h>
 #include <SDL.h>
 
 void usage(const char* fileName)

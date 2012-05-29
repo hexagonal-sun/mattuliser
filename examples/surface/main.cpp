@@ -25,6 +25,7 @@
 #include <sdlexception.h>
 #include <argexception.h>
 #include <iostream>
+#include <unistd.h>
 #include "surface.h"
 #include <SDL.h>
 

@@ -29,6 +29,7 @@
 #include "eventHandlers/quitEvent.h"
 #include "eventHandlers/keyQuit.h"
 #include "argexception.h"
+#include <unistd.h>
 #include <SDL_timer.h>
 #include <SDL_audio.h>
 #include <iostream>

@@ -26,6 +26,7 @@
 #include <dspmanager.h>
 #include <argexception.h>
 #include <SDL_opengl.h>
+#include <unistd.h>
 #include <math.h>
 
 epiclepsy::epiclepsy(visualiserWin* win, int argc, char* argv[]) : visualiser(win)
