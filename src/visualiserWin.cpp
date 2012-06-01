@@ -321,35 +321,32 @@ DSPManager* visualiserWin::getDSPManager() const
 int static decodeFrame(AVCodecContext* codecCtx, uint8_t* buffer,
                        int bufferSize, packetQueue* queue)
 {
-	static AVPacket* packet = NULL;
-	static int packetSize = 0;
-	static uint8_t* packetData = NULL;
+	AVPacket* packet = NULL;
+	AVFrame decodedAudioFrame;
+	int frameDecoded;
+	int framesRead;
 
 	//Get a packet.
-	if(packetSize == 0)
-	{
-		packet = queue->get();
-		if(!packet)
-			return -1;
-		packetSize = packet->size;
-		packetData = packet->data;
-	}
+	packet = queue->get();
+	if(!packet)
+		return -1;
 
-	int dataSize = bufferSize;
-	int framesRead = avcodec_decode_audio3(codecCtx, (int16_t*)buffer,
-	                                       &dataSize, packet);
+	framesRead = avcodec_decode_audio4(codecCtx, &decodedAudioFrame,
+	                                   &frameDecoded, packet);
 
 	if(framesRead < 0)
 	{
-		//Skip this frame if we have an error.
-		packetSize = 0;
+		//Skip this packet if we have an error.
 		return 0;
 	}
 
-	packetSize -= framesRead;
-	packetData -= framesRead;
+	// Note that the buffer that we're copying into is 3/2 times the
+	// size of a an audio frame, so we shouldn't need to check for a
+	// buffer overflow here.
+	if(frameDecoded)
+		memcpy(buffer, decodedAudioFrame.data[0], decodedAudioFrame.linesize[0]);
 
-	return dataSize;
+	return decodedAudioFrame.linesize[0];
 }
 
 void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
@@ -417,14 +414,15 @@ bool visualiserWin::play(std::string &file)
 	av_register_all();
 
 	//Attempt to open the file.
-	AVFormatContext* fmtCtx;
-	if(av_open_input_file(&fmtCtx, file.c_str(), NULL, 0, NULL) != 0)
+	AVFormatContext* fmtCtx = NULL;
+
+	if(avformat_open_input(&fmtCtx, file.c_str(), NULL, NULL) != 0)
 	{
 		std::cerr << "Could not open file." << std::endl;
 		return false;
 	}
 
-	if(av_find_stream_info(fmtCtx) < 0)
+	if(avformat_find_stream_info(fmtCtx, NULL) < 0)
 	{
 		std::cerr << "Could not find stream information." << std::cerr;
 		return false;
@@ -457,7 +455,7 @@ bool visualiserWin::play(std::string &file)
 		std::cerr << "Could not find codec!" << std::endl;
 		return false;
 	}
-	avcodec_open(codecCtx, codec);
+	avcodec_open2(codecCtx, codec, NULL);
 
 	SDL_AudioSpec wantedSpec;
 	SDL_AudioSpec gotSpec;
