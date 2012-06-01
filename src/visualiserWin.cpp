@@ -321,18 +321,20 @@ DSPManager* visualiserWin::getDSPManager() const
 int static decodeFrame(AVCodecContext* codecCtx, uint8_t* buffer,
                        int bufferSize, packetQueue* queue)
 {
-	AVPacket* packet = NULL;
+	AVPacket packet;
 	AVFrame decodedAudioFrame;
 	int frameDecoded;
 	int framesRead;
+	int ret;
 
 	//Get a packet.
-	packet = queue->get();
-	if(!packet)
+	ret = queue->get(&packet);
+	if(ret == 0)
 		return -1;
-
 	framesRead = avcodec_decode_audio4(codecCtx, &decodedAudioFrame,
-	                                   &frameDecoded, packet);
+	                                   &frameDecoded, &packet);
+
+	av_free_packet(&packet);
 
 	if(framesRead < 0)
 	{

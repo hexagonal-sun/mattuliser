@@ -42,11 +42,11 @@ packetQueue::~packetQueue()
 void packetQueue::put(AVPacket* packet)
 {
 	AVPacketList* pktList;
-	av_dup_packet(packet);
 
 	pktList = (AVPacketList*)av_malloc(sizeof(AVPacketList));
 	pktList->pkt = *packet;
 	pktList->next = NULL;
+	av_dup_packet(&(pktList->pkt));
 
 	pthread_mutex_lock(mut);
 	if(last_packet == NULL)
@@ -59,11 +59,10 @@ void packetQueue::put(AVPacket* packet)
 	pthread_mutex_unlock(mut);
 }
 
-AVPacket* packetQueue::get()
+int packetQueue::get(AVPacket* packetToReturn)
 {
 	pthread_mutex_lock(mut);
 	AVPacketList* packetList = first_packet;
-	AVPacket* thePacket;
 	if(packetList)
 	{
 		first_packet = first_packet->next;
@@ -71,14 +70,15 @@ AVPacket* packetQueue::get()
 			last_packet = NULL;
 		num_packets--;
 		size -= packetList->pkt.size;
-		thePacket = &packetList->pkt;
+		(*packetToReturn) = packetList->pkt;
+
 		av_free(packetList);
 		pthread_mutex_unlock(mut);
-		return thePacket;
+		return 1;
 	}
 	else
 	{
 		pthread_mutex_unlock(mut);
-		return NULL;
+		return 0;
 	}
 }

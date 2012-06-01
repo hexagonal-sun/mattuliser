@@ -33,7 +33,7 @@ public:
 	packetQueue();
 	virtual ~packetQueue();
 	void put(AVPacket* packet);
-	AVPacket* get();
+	int get(AVPacket* packetToReturn);
 
 private:
 	AVPacketList* first_packet;
