@@ -177,14 +177,18 @@ std::string visualiserWin::usage()
 	theUsage += "-f      Toggle fulscreen mode. This will make the window detect\n";
 	theUsage += "        your current screen resolution and fill the screen.\n";
 	theUsage += "-s      Set the size of the window. This option should be in\n";
-	theUsage += "        the format [WIDTH]x[HEIGHT], eg 1024x768.";
+	theUsage += "        the format [WIDTH]x[HEIGHT], eg 1024x768.\n";
+	theUsage += "-m      Enable mpd mode. The argument to this option should\n";
+	theUsage += "        be a path to the MPD FIFO output that is set to the\n";
+	theUsage += "        format 44100:16:1.";
+
 	return theUsage;
 }
 
 std::string visualiserWin::usageSmall()
 {
 	std::string theSmallUsage;
-	theSmallUsage = "-f -s [WIDTH]x[HEIGHT]";
+	theSmallUsage = "-f -s [WIDTH]x[HEIGHT] -m MPD_FIFO";
 	return theSmallUsage;
 }
 

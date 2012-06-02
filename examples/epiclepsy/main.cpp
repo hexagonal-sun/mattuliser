@@ -31,7 +31,7 @@
 void usage(const char* fileName, const char* error = NULL)
 {
 	if(error)
-		std::cout << error << std::endl;
+		std::cout << "ERROR: " << error << std::endl << std::endl;
 	std::cout << "Usage: " << fileName << " [" << visualiserWin::usageSmall()
 	          << " " << epiclepsy::usageSmall() <<  "] FILE" << std::endl;
 	std::cout << visualiserWin::usage() << std::endl;
@@ -50,11 +50,15 @@ int main(int argc, char* argv[])
 	// Initialise SDL
 	SDL_Init(SDL_INIT_EVERYTHING);
 
-	// create a visualiser window.
 	visualiserWin* win;
+	epiclepsy* vis;
 	try
 	{
+		// create a visualiser window.
 		win = new visualiserWin(argc, argv);
+
+		// create an instance of the visualiser class.
+		vis = new epiclepsy(win, argc, argvCopy);
 	}
 	catch(const argException e)
 	{
@@ -62,11 +66,8 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	// create an instance of the visualiser class.
-	epiclepsy epiclepsyVis(win, argc, argvCopy);
-
 	// set the window's visualiser to the current one.
-	win->setVisualiser(&epiclepsyVis);
+	win->setVisualiser(vis);
 
 	// attempt to play the file.
 	try
@@ -85,5 +86,6 @@ int main(int argc, char* argv[])
 
 	// If we come out the event loop, we're quitting, so delete the window.
 	delete win;
+	delete vis;
 	return EXIT_SUCCESS;
 }

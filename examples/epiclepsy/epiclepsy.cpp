@@ -57,6 +57,12 @@ epiclepsy::epiclepsy(visualiserWin* win, int argc, char* argv[]) : visualiser(wi
 		}
 	}
 
+	if(optind == argc)
+	{
+		// We didn't get a song param.
+		throw(argException("Song was not specified."));
+	}
+
 	// this plug-in needs the FFT DSP, set that up here.
 	FFT* fftPlugin = new FFT(noSampleSets);
 	this->fftPlugin = fftPlugin;
