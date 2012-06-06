@@ -277,6 +277,7 @@ static void* MPDWorkerEntry(void* args)
 		std::cout << "Could not open MPD FIFO: " << mpdargs->file << std::endl;
 		return NULL;
 	}
+	setbuf(f, NULL);
 	uint8_t data[2048];
 	while(true)
 	{
