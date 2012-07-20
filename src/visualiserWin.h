@@ -24,8 +24,8 @@
 #ifndef _VISUALISERWIN_H_
 #define _VISUALISERWIN_H_
 
-#include <SDL_video.h>
-#include <SDL_events.h>
+#include <SDL/SDL_video.h>
+#include <SDL/SDL_events.h>
 #include <set>
 #include <string>
 #include "packetqueue.h"
@@ -73,7 +73,7 @@ class visualiserWin
 		 *
 		 * see visualiserWin::useage() to print out all argument options.
 		 */
-		visualiserWin(int desiredFrameRate, 
+		visualiserWin(int desiredFrameRate,
 		              bool vsync,
 		              int width,
 		              int height,
@@ -116,7 +116,7 @@ class visualiserWin
 		 * It is useful for formulating the first line of usage output.
 		 */
 		static std::string usageSmall();
-		
+
 		/**
 		 * Register an event handler for a certain type of event.
 		 * @note once an event handler has been registered, it will automatically be
@@ -125,7 +125,7 @@ class visualiserWin
 		 * @param eH the event handler to register.
 		 */
 		void registerEventHandler(eventHandler* eH);
-		
+
 		/**
 		 * This is the main event loop for the window.
 		 * It is implemented in the base class to abstract
@@ -139,7 +139,7 @@ class visualiserWin
 		 * break out of the event loop.
 		 */
 		void signalError();
-		
+
 		/**
 		 * Play a file.
 		 * @param file the file to play.
@@ -147,46 +147,46 @@ class visualiserWin
 		 * @throws a SDLException if an error occured.
 		 */
 		bool play(std::string& file);
-		
+
 		/**
 		 * Resume playback of a file that is paused.
 		 */
 		void resumePlayback();
-		
+
 		/**
 		 * Pause the playback of the file.
 		 */
 		void pausePlayback();
-		
+
 		/**
 		 * Close the window the next time the event loop runs.
 		 */
 		void closeWindow();
-		
+
 		/**
 		 * return a pointer to the DSPManager class.
 		 * @returns a pointer to this windows DSP Manager class.
 		 */
 		DSPManager* getDSPManager() const;
-		
+
 		/**
 		 * the width and height of the window.
 		 */
 		int width;
 		int height;
-		
+
 	private:
 		/**
 		 * Called by the event loop to handle
 		 * all events.
 		 */
 		void handleEvent(SDL_Event* e);
-		
+
 		/**
 		 * register standard event handlers for a window.
 		 */
 		void initialiseStockEventHandlers();
-		
+
 		SDL_Surface* drawContext;
 		int desiredFrameRate;
 		bool shouldVsync;
