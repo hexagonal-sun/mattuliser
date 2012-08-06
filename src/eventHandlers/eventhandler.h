@@ -25,7 +25,7 @@
 #define _EVENTHANDLER_H_
 
 #include <stdint.h>
-#include <SDL_events.h>
+#include <SDL/SDL_events.h>
 
 /**
  * A pure abstract class for handling events.
@@ -39,7 +39,7 @@ class eventHandler
 		 * @returns a SDL_Event type such as SDL_KEYDOWN.
 		 */
 		virtual uint8_t eventType() = 0;
-		
+
 		/**
 		 * This function should handle the event.
 		 * It will only be called with an event type

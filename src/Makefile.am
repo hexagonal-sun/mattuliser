@@ -23,6 +23,7 @@ libmattuliser_la_LDFLAGS = -version-info $(MATTULISER_LIBRARY_VERSION)
 nobase_pkginclude_HEADERS = \
 	dspmanager.h sdlexception.h visualiser.h \
 	visualiserWin.h dsp/dsp.h dsp/fft.h dsp/pcm.h \
+	eventHandlers/eventhandler.h \
 	eventHandlers/keyQuit.h eventHandlers/quitEvent.h \
 	circularBuffer.h packetqueue.h argexception.h \
 	util/freelist.h
