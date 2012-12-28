@@ -8,6 +8,8 @@ AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE([foreign])
 LT_INIT
 
+AM_SILENT_RULES([yes])
+
 AC_ARG_ENABLE([examples],
     AS_HELP_STRING([--enable-examples], [Build exaple visualisers.]))
 
