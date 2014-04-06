@@ -31,6 +31,7 @@ PKG_CHECK_MODULES([fftw], [fftw3 >= 3.0.0])
 PKG_CHECK_MODULES([GL], [gl >= 7.0.0])
 PKG_CHECK_MODULES([libavcodec], [libavcodec >= 52.0.0])
 PKG_CHECK_MODULES([libavformat], [libavformat >= 52.0.0])
+PKG_CHECK_MODULES([libswresample], [libswresample >= 0.17.0])
 PKG_CHECK_MODULES([GLU], [glu >= 7.0.0])
 AM_PROG_LIBTOOL
 

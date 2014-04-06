@@ -37,7 +37,9 @@
 
 extern "C"{
 #include <libavcodec/avcodec.h>
+#include <libavutil/opt.h>
 #include <libavformat/avformat.h>
+#include <libswresample/swresample.h>
 }
 
 #define CIRCBUFSIZE 5
@@ -325,7 +327,8 @@ DSPManager* visualiserWin::getDSPManager() const
 }
 
 int static decodeFrame(AVCodecContext* codecCtx, uint8_t **buffer,
-                       int bufferSize, packetQueue* queue)
+                       int bufferSize, packetQueue* queue,
+                       SwrContext *swr)
 {
 	AVPacket packet;
 	AVFrame *decodedAudioFrame = av_frame_alloc();
@@ -348,13 +351,16 @@ int static decodeFrame(AVCodecContext* codecCtx, uint8_t **buffer,
 	// size of a an audio frame, so we shouldn't need to check for a
 	// buffer overflow here.
 	if(frameDecoded) {
-		*buffer = (uint8_t *)malloc(decodedAudioFrame->linesize[0]);
-
-		if (!*buffer)
+		if (av_samples_alloc(buffer, &ret,
+				     av_get_channel_layout_nb_channels(AV_CH_LAYOUT_STEREO),
+				     decodedAudioFrame->nb_samples,
+				     AV_SAMPLE_FMT_S16, 0) < 0)
 			throw std::runtime_error("Could not allocate decode samples buffer");
 
-		memcpy(*buffer, decodedAudioFrame->data[0], decodedAudioFrame->linesize[0]);
-                ret = decodedAudioFrame->linesize[0];
+		swr_convert(swr, buffer, decodedAudioFrame->nb_samples,
+			    (const uint8_t **)decodedAudioFrame->data,
+			    decodedAudioFrame->nb_samples);
+
                 goto out;
 	}
 
@@ -372,11 +378,23 @@ void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 	DSPManager* dspman = static_cast<DSPManager*>(args->dspman);
 	AVCodecContext* codecCtx = (AVCodecContext*)args->avcodeccontext;
 	packetQueue* queue = args->queue;
+	SwrContext *swr;
 
 	static uint8_t *buf = NULL;
 	static unsigned int bufLength = 0;
 	static unsigned int bufCurrentIndex = 0;
 	uint8_t* streamIndex = stream;
+
+	// Setup the resample context to ensure out samples are in the
+	// format that SDL expectes them to be.
+	swr = swr_alloc();
+	av_opt_set_int(swr, "in_channel_layout",  codecCtx->channel_layout, 0);
+	av_opt_set_int(swr, "out_channel_layout", AV_CH_LAYOUT_STEREO,  0);
+	av_opt_set_int(swr, "in_sample_rate", codecCtx->sample_rate, 0);
+	av_opt_set_int(swr, "out_sample_rate", codecCtx->sample_rate, 0);
+	av_opt_set_sample_fmt(swr, "in_sample_fmt", codecCtx->sample_fmt, 0);
+	av_opt_set_sample_fmt(swr, "out_sample_fmt", AV_SAMPLE_FMT_S16,  0);
+	swr_init(swr);
 
 	int samplesLeft = len;
 	while(samplesLeft > 0)
@@ -390,7 +408,7 @@ retry_decode:
 			if (buf)
 				free(buf);
 
-			int decodeSize = decodeFrame(codecCtx, &buf, sizeof(buf), queue);
+			int decodeSize = decodeFrame(codecCtx, &buf, sizeof(buf), queue, swr);
 			if(decodeSize < 0)
 			{
 				// something went wrong... try again.
@@ -413,11 +431,14 @@ retry_decode:
 	}
 
 	dspman->processAudioPCM(NULL, stream, len);
+
 	
 	if(dspman->cbuf == NULL)
 		dspman->cbuf = new circularBuffer::circularBuffer(CIRCBUFSIZE, sizeof(uint8_t) * len);
 	memcpy(dspman->cbuf->add(), stream, sizeof(uint8_t) * len);
 	memcpy(stream, dspman->cbuf->pop(), sizeof(uint8_t) * len);
+
+	swr_free(&swr);
 }
 
 bool visualiserWin::play(std::string &file)

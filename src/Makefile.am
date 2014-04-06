@@ -16,7 +16,7 @@ libmattuliser_la_CPPFLAGS = @SDL_CFLAGS@ $(GL_CFLAGS) \
 
 libmattuliser_la_LIBADD = @SDL_LIBS@ $(GL_LIBS) \
                           $(fftw_LIBS) \
-                          $(libavcodec_LIBS) $(libavformat_LIBS)
+                          $(libavcodec_LIBS) $(libavformat_LIBS) $(libswresample_LIBS)
 
 libmattuliser_la_LDFLAGS = -version-info $(MATTULISER_LIBRARY_VERSION)
 

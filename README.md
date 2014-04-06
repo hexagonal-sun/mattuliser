@@ -17,6 +17,7 @@ following installed on your system:
 * fftw3
 * libavcodec
 * libavformat
+* libswresample
 
 You should then be able to run:
 
