@@ -46,3 +46,4 @@ Some small example visualisers are included:
 * eipclepsy - Draw some cool colours (hint, try pressing the 'v' key).
 * poly - Draw a huge polygon that moves with the beat of the music.
 * polycurve - Draw a Bézier curve that changes motion with the beat of the music.
+* shaders - Read in a fragment shader and export fft uniforms to draw interesting patterns.
