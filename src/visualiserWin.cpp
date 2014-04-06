@@ -33,6 +33,7 @@
 #include <SDL_timer.h>
 #include <SDL_audio.h>
 #include <iostream>
+#include <stdexcept>
 
 extern "C"{
 #include <libavcodec/avcodec.h>
@@ -323,37 +324,46 @@ DSPManager* visualiserWin::getDSPManager() const
 	return dspman;
 }
 
-int static decodeFrame(AVCodecContext* codecCtx, uint8_t* buffer,
+int static decodeFrame(AVCodecContext* codecCtx, uint8_t **buffer,
                        int bufferSize, packetQueue* queue)
 {
 	AVPacket packet;
-	AVFrame decodedAudioFrame;
-	int frameDecoded;
-	int framesRead;
-	int ret;
+	AVFrame *decodedAudioFrame = av_frame_alloc();
+	int frameDecoded, framesRead, ret;
 
 	//Get a packet.
-	ret = queue->get(&packet);
-	if(ret == 0)
-		return -1;
-	framesRead = avcodec_decode_audio4(codecCtx, &decodedAudioFrame,
+	if (!queue->get(&packet))
+		goto err_out;
+
+	framesRead = avcodec_decode_audio4(codecCtx, decodedAudioFrame,
 	                                   &frameDecoded, &packet);
 
 	av_free_packet(&packet);
 
 	if(framesRead < 0)
-	{
 		//Skip this packet if we have an error.
-		return 0;
-	}
+		goto err_out;
 
 	// Note that the buffer that we're copying into is 3/2 times the
 	// size of a an audio frame, so we shouldn't need to check for a
 	// buffer overflow here.
-	if(frameDecoded)
-		memcpy(buffer, decodedAudioFrame.data[0], decodedAudioFrame.linesize[0]);
+	if(frameDecoded) {
+		*buffer = (uint8_t *)malloc(decodedAudioFrame->linesize[0]);
 
-	return decodedAudioFrame.linesize[0];
+		if (!*buffer)
+			throw std::runtime_error("Could not allocate decode samples buffer");
+
+		memcpy(*buffer, decodedAudioFrame->data[0], decodedAudioFrame->linesize[0]);
+                ret = decodedAudioFrame->linesize[0];
+                goto out;
+	}
+
+err_out:
+	*buffer = NULL;
+	ret = 0;
+out:
+	av_frame_unref(decodedAudioFrame);
+	return ret;
 }
 
 void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
@@ -363,7 +373,7 @@ void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 	AVCodecContext* codecCtx = (AVCodecContext*)args->avcodeccontext;
 	packetQueue* queue = args->queue;
 
-	static uint8_t buf[(AVCODEC_MAX_AUDIO_FRAME_SIZE * 3) / 2];
+	static uint8_t *buf = NULL;
 	static unsigned int bufLength = 0;
 	static unsigned int bufCurrentIndex = 0;
 	uint8_t* streamIndex = stream;
@@ -373,13 +383,18 @@ void static audioThreadEntryPoint(void* udata, uint8_t* stream, int len)
 	{
 		if(bufCurrentIndex >= bufLength)
 		{
-			// No more data in the buffer, get some more.
-			int decodeSize = decodeFrame(codecCtx, buf, sizeof(buf), queue);
+retry_decode:
+			// No more data in the buffer, get some
+			// more. Ensure we free the old buffer that we
+			// allocated in the previous decodeFrame call.
+			if (buf)
+				free(buf);
+
+			int decodeSize = decodeFrame(codecCtx, &buf, sizeof(buf), queue);
 			if(decodeSize < 0)
 			{
-				// something went wrong... silence.
-				bufCurrentIndex = AVCODEC_MAX_AUDIO_FRAME_SIZE;
-				memset(buf, 0, AVCODEC_MAX_AUDIO_FRAME_SIZE);
+				// something went wrong... try again.
+				goto retry_decode;
 			}
 			else
 			{
