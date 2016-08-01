@@ -467,7 +467,7 @@ bool visualiserWin::play(std::string &file)
 
 	if(avformat_find_stream_info(fmtCtx, NULL) < 0)
 	{
-		std::cerr << "Could not find stream information." << std::cerr;
+		std::cerr << "Could not find stream information." << std::endl;
 		return false;
 	}
 
